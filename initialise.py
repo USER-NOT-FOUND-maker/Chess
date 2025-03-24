@@ -32,31 +32,56 @@ class Pawn(Piece):
         super().__init__(Colour,File,Rank)
         self.Value = 1
     
+    def PawnHasntMoved(self):
+        return (self.Colour == "White" and self.Rank == 2) or (self.Colour == "Black" and self.Rank == 7)
+
     def __str__(self):
         return f"{self.Colour[0]}p"
     
     def Move(self,NewPos):
-        RankChange = NewPos[1] - self.Rank
-        FileChange = not (self.File == NewPos[0])
 
-        if FileChange:
-            print("invalid move, unless capturing another piece, pawns cannot move diagonally")
+        if self.File != NewPos[0].upper():
+            print("\nPawns must move straight forward unless capturing\n")
+            DisplayBoard(Board)
+            return
+        
+        if self.PawnHasntMoved():
+            if self.Colour == "Black":
+                AllowedRankChanges = (-1,-2)
+            else:
+                AllowedRankChanges = (1,2)
+        else:
+            if self.Colour == "Black":
+                AllowedRankChanges = (-1)
+            else:
+                AllowedRankChanges = (1)
+
+        if (int(NewPos[1]) - self.Rank) not in AllowedRankChanges:
+            print("Pawn is not allowed to move up that many ranks.")
             return
 
-        if self.Colour == "White" and self.Rank == 2:
-            if RankChange > 2:
-                print("Invalid move, pawns on their first turn can move either 1 or 2 spaces forward, not any more")
-                return
-            elif RankChange < 1:
-                print("Invalid move, pawns on their first move must go to a new position and cant go backwards (at all).")
-                return
-            else:
-                self.Rank = NewPos[1]
-                self.Position = (self.File,self.Rank)
-                IndOfSquare = FindSquareInd()
+        PieceSquareInd = self.FindSquareInd()
+
+        def GetNewSquareInd(self,NewPos):
+            RankChange = int(NewPos[1]) - self.Rank
+            NewRank = self.Rank + RankChange
+
+            for i in range(len(Board)):
+                print(f"Pawn rank = {self.Rank} Pawn File = {self.File} current square rank = {Board[i].Rank} current square file = {Board[i].File} New Rank = {NewRank}")
+                if Board[i].Rank == NewRank and Board[i].File == self.File:
+                    return i
 
 
+        NewSquareInd = GetNewSquareInd(self,NewPos)
 
+        print(NewSquareInd)
+
+        self.Rank = int(NewPos[1]) - self.Rank
+
+        Board[PieceSquareInd].Piece = None
+        Board[NewSquareInd].Piece = self
+        
+        
 
 class Knight(Piece):
     def __init__(self,Colour,File,Rank):
@@ -109,8 +134,7 @@ class King(Piece):
 
 
 class Square:
-    def __init__(self,Colour,Piece,File,Rank):
-        self.Colour = Colour
+    def __init__(self,Piece,File,Rank):
         self.Piece = Piece
         self.File = File
         self.Rank = Rank
@@ -173,54 +197,44 @@ for i in range(16):
 
 def ConstructBoard():
     Board = []
-    Dark = False
     for i in range(8):
-        for j in range(8):
-            if Dark:
-                Board.append(Square("Black",None,Files[i],j+1))
-            else:
-                Board.append(Square("White",None,Files[i],j+1))
+        for j in range(1,9):
+            Board.append(Square(None,Files[i],j))
 
-            Dark = not Dark
-        Dark = not Dark
     return Board
 
 def FillBoard(Board):
     for i in range(8,16):
-        Colour = Board[i].Colour
-        Board[i] = Square(Colour,Pawn("White",Files[i-8],2),Files[i-8],2)
+        Board[i] = Square(Pawn("White",Files[i-8],2),Files[i-8],2)
  
     for i in range(48,56):
-        Colour = Board[i].Colour
-        Board[i] = Square(Colour,Pawn("Black",Files[i-48],2),Files[i-48],2)
+        Board[i] = Square(Pawn("Black",Files[i-48],2),Files[i-48],2)
 
     for i in range(8):
-        Colour = Board[i].Colour
 
         if i == 0 or i == 7:
-            Board[i] = Square(Colour,Rook("White",Files[i],1),Files[i],1)
+            Board[i] = Square(Rook("White",Files[i],1),Files[i],1)
         elif i == 1 or i == 6:
-            Board[i] = Square(Colour,Knight("White",Files[i],1),Files[i],1)
+            Board[i] = Square(Knight("White",Files[i],1),Files[i],1)
         elif i == 2 or i == 5:
-            Board[i] = Square(Colour,Bishop("White",Files[i],1),Files[i],1)
+            Board[i] = Square(Bishop("White",Files[i],1),Files[i],1)
         elif i == 3:
-            Board[i] = Square(Colour,Queen("White",Files[i],1),Files[i],1)
+            Board[i] = Square(Queen("White",Files[i],1),Files[i],1)
         else:
-            Board[i] = Square(Colour,King("White",Files[i],1),Files[i],1)
+            Board[i] = Square(King("White",Files[i],1),Files[i],1)
 
     for i in range(56,64):
-            Colour = Board[i].Colour
 
             if i == 56 or i == 63:
-                Board[i] = Square(Colour,Rook("Black",Files[i-56],1),Files[i-56],8)
+                Board[i] = Square(Rook("Black",Files[i-56],1),Files[i-56],8)
             elif i == 57 or i == 62:
-                Board[i] = Square(Colour,Knight("Black",Files[i-56],1),Files[i-56],8)
+                Board[i] = Square(Knight("Black",Files[i-56],1),Files[i-56],8)
             elif i == 58 or i == 61:
-                Board[i] = Square(Colour,Bishop("Black",Files[i-56],1),Files[i-56],8)
+                Board[i] = Square(Bishop("Black",Files[i-56],1),Files[i-56],8)
             elif i == 59:
-                Board[i] = Square(Colour,Queen("Black",Files[i-56],1),Files[i-56],8)
+                Board[i] = Square(Queen("Black",Files[i-56],1),Files[i-56],8)
             else:
-                Board[i] = Square(Colour,King("Black",Files[i-56],1),Files[i-56],8)
+                Board[i] = Square(King("Black",Files[i-56],1),Files[i-56],8)
 
     return Board
 
@@ -239,3 +253,12 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
+"""
+ExamplePawn = Board[8].Piece
+ExamplePawn.Move("A3")
+
+DisplayBoard(Board)
+"""
+
+for i in Board:
+    print(f"file,rank = {i.File} {i.Rank}")
