@@ -95,7 +95,7 @@ class Pawn(Piece):
 
         NewSquareInd = NotationToIndex(NewPos[0],int(NewPos[1]))
 
-        New<F6>Rank = int(NewPos[1]) - self.Rank
+        NewRank = int(NewPos[1]) - self.Rank
 
         self.Rank = NewRank
 
