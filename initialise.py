@@ -1,6 +1,35 @@
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
 
+def NotationToIndex(File,Rank):
+    RankIndex = {
+                1: [i for i in range(0, 8)],
+                2: [i for i in range(8, 16)],
+                3: [i for i in range(16, 24)],
+                4: [i for i in range(24, 32)],
+                5: [i for i in range(32, 40)],
+                6: [i for i in range(40, 48)],
+                7: [i for i in range(48, 56)],
+                8: [i for i in range(56, 64)]
+                }
+
+    FileIndex = {
+            "A": [i for i in range(0, 56+1, 8)],
+            "B": [i for i in range(1, 57+1, 8)],
+            "C": [i for i in range(2, 58+1, 8)],
+            "D": [i for i in range(3, 59+1, 8)],
+            "E": [i for i in range(4, 60+1, 8)],
+            "F": [i for i in range(5, 61+1, 8)],
+            "G": [i for i in range(6, 62+1, 8)],
+            "H": [i for i in range(7, 63+1, 8)]
+            }
+
+    PossibleIndexes = RankIndex[Rank]
+
+    for i in PossibleIndexes:
+        if i in FileIndex[File]:
+            return i
+
 class InvalidPieceInitialiser(ValueError):
     def __init__(self,message):
         self.Message = message
@@ -45,41 +74,33 @@ class Pawn(Piece):
             DisplayBoard(Board)
             return
         
-        if self.PawnHasntMoved():
-            if self.Colour == "Black":
-                AllowedRankChanges = (-1,-2)
-            else:
-                AllowedRankChanges = (1,2)
+        if self.PawnHasntMoved() and self.Colour == "Black":
+            AllowedRankChanges = (-1,-2)
+        elif self.PawnHasntMoved() and self.Colour == "White":
+            AllowedRankChanges = (1,2)
+        elif (not self.PawnHasntMoved) and self.Colour == "Black":
+            AllowedRankChanges = (-1)
         else:
-            if self.Colour == "Black":
-                AllowedRankChanges = (-1)
-            else:
-                AllowedRankChanges = (1)
+            AllowedRankChanges = (1)
 
         if (int(NewPos[1]) - self.Rank) not in AllowedRankChanges:
-            print("Pawn is not allowed to move up that many ranks.")
+            print("\nNewPos = ",NewPos[1])
+            print("\ncurrent rank =",self.Rank)
+            print((int(NewPos[1]) - self.Rank))
+            print("\nPawn is not allowed to move up that many ranks.")
+            DisplayBoard(Board)
             return
 
         PieceSquareInd = self.FindSquareInd()
 
-        def GetNewSquareInd(self,NewPos):
-            RankChange = int(NewPos[1]) - self.Rank
-            NewRank = self.Rank + RankChange
-
-            for i in range(len(Board)):
-                print(f"Pawn rank = {self.Rank} Pawn File = {self.File} current square rank = {Board[i].Rank} current square file = {Board[i].File} New Rank = {NewRank}")
-                if Board[i].Rank == NewRank and Board[i].File == self.File:
-                    return i
-
-
-        NewSquareInd = GetNewSquareInd(self,NewPos)
-
-        print(NewSquareInd)
+        NewSquareInd = NotationToIndex(NewPos[0],int(NewPos[1]))
 
         self.Rank = int(NewPos[1]) - self.Rank
 
         Board[PieceSquareInd].Piece = None
         Board[NewSquareInd].Piece = self
+
+        DisplayBoard(Board)
         
         
 
@@ -145,61 +166,17 @@ class Square:
         else:
             return f"[{self.Piece}]"
 
-def ConstructPieces(Colour):
-    if Colour == "White":
-        RankOne = 1
-        RankTwo = 2
-    else:
-        RankOne = 7
-        RankTwo = 8
-
-    Pawns = [Pawn(Colour,Files[i],RankTwo) for i in range(8)]
-
-    Rooks = [Rook(Colour,Files[0],RankOne),Rook(Colour,Files[7],RankOne)]
-
-    Bishops = [Bishop(Colour,Files[2],RankOne),Bishop(Colour,Files[6],RankOne)]
-
-    Knights= [Knight(Colour,Files[3],RankOne),Knight(Colour,Files[5],RankOne)]
-
-    Queens =[Queen(Colour,Files[4],RankOne)]
-
-    king = King(Colour,Files[5],RankOne)
-
-    Pieces = []
-
-    for i in range(8):
-        Pieces.append(Pawns[i])
-    
-    for i in range(2):
-        Pieces.append(Rooks[i])
-    
-    for i in range(2):
-        Pieces.append(Bishops[i])
-    
-    for i in range(2):
-        Pieces.append(Knights[i])
-    
-    Pieces.append(Queens[0])
-    Pieces.append(king)
-
-    return Pieces
-
-
-WhitePieces,BlackPieces = ConstructPieces("White"),ConstructPieces("Black")
-
-Pieces = []
-
-for i in range(16):
-    Pieces.append(WhitePieces[i])
-
-for i in range(16):
-    Pieces.append(BlackPieces[i])
-
 def ConstructBoard():
     Board = []
-    for i in range(8):
-        for j in range(1,9):
-            Board.append(Square(None,Files[i],j))
+    for i in range(1,9):
+        Board.append(Square(None,"A",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"B",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"C",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"D",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"E",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"F",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"G",i))
+    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"H",i))
 
     return Board
 
@@ -238,9 +215,49 @@ def FillBoard(Board):
 
     return Board
 
+def FillBoardBack(Board):
+    # White pieces
+    Board[0].Piece = Rook("White", "A", 1)
+    Board[1].Piece = Knight("White", "B", 1)
+    Board[2].Piece = Bishop("White", "C", 1)
+    Board[3].Piece = Queen("White", "D", 1)
+    Board[4].Piece = King("White", "E", 1)
+    Board[5].Piece = Bishop("White", "F", 1)
+    Board[6].Piece = Knight("White", "G", 1)
+    Board[7].Piece = Rook("White", "H", 1)
 
-Board = ConstructBoard()
-Board = FillBoard(Board)
+    Board[8].Piece = Pawn("White", "A", 2)
+    Board[9].Piece = Pawn("White", "B", 2)
+    Board[10].Piece = Pawn("White", "C", 2)
+    Board[11].Piece = Pawn("White", "D", 2)
+    Board[12].Piece = Pawn("White", "E", 2)
+    Board[13].Piece = Pawn("White", "F", 2)
+    Board[14].Piece = Pawn("White", "G", 2)
+    Board[15].Piece = Pawn("White", "H", 2)
+
+    # Black pieces
+    Board[56].Piece = Rook("Black", "A", 8)
+    Board[57].Piece = Knight("Black", "B", 8)
+    Board[58].Piece = Bishop("Black", "C", 8)
+    Board[59].Piece = Queen("Black", "D", 8)
+    Board[60].Piece = King("Black", "E", 8)
+    Board[61].Piece = Bishop("Black", "F", 8)
+    Board[62].Piece = Knight("Black", "G", 8)
+    Board[63].Piece = Rook("Black", "H", 8)
+
+    Board[48].Piece = Pawn("Black", "A", 7)
+    Board[49].Piece = Pawn("Black", "B", 7)
+    Board[50].Piece = Pawn("Black", "C", 7)
+    Board[51].Piece = Pawn("Black", "D", 7)
+    Board[52].Piece = Pawn("Black", "E", 7)
+    Board[53].Piece = Pawn("Black", "F", 7)
+    Board[54].Piece = Pawn("Black", "G", 7)
+    Board[55].Piece = Pawn("Black", "H", 7)
+
+    return Board
+
+
+Board = FillBoardBack(ConstructBoard())
 
 def DisplayBoard(Board):
     for i in range(len(Board)):
@@ -253,12 +270,11 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
-"""
-ExamplePawn = Board[8].Piece
-ExamplePawn.Move("A3")
 
-DisplayBoard(Board)
-"""
+Pawn = Board[NotationToIndex("D",2)].Piece
 
-for i in Board:
-    print(f"file,rank = {i.File} {i.Rank}")
+Pawn.Move("D4")
+
+Pawn.Move("D5")
+
+
