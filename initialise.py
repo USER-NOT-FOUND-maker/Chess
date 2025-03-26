@@ -95,7 +95,9 @@ class Pawn(Piece):
 
         NewSquareInd = NotationToIndex(NewPos[0],int(NewPos[1]))
 
-        self.Rank = int(NewPos[1]) - self.Rank
+        New<F6>Rank = int(NewPos[1]) - self.Rank
+
+        self.Rank = NewRank
 
         Board[PieceSquareInd].Piece = None
         Board[NewSquareInd].Piece = self
@@ -274,7 +276,5 @@ DisplayBoard(Board)
 Pawn = Board[NotationToIndex("D",2)].Piece
 
 Pawn.Move("D4")
-
-Pawn.Move("D5")
 
 
