@@ -1,5 +1,8 @@
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
+WhiteTurn = True
+
+# idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
 def NotationToIndex(File,Rank):
     RankIndex = {
@@ -64,46 +67,58 @@ class Pawn(Piece):
     def PawnHasntMoved(self):
         return (self.Colour == "White" and self.Rank == 2) or (self.Colour == "Black" and self.Rank == 7)
 
+    def GetAllowedRankChanges(self):
+        if self.Colour == "Black" and self.PawnHasntMoved():
+            return [-1,-2]
+        elif self.Colour == "Black" and (not self.PawnHasntMoved()):
+            return [-1]
+
+        elif self.Colour == "White" and (not self.PawnHasntMoved()):
+            return [1]
+        else:
+            return [1,2]
+
     def __str__(self):
         return f"{self.Colour[0]}p"
     
     def Move(self,NewPos):
 
-        if self.File != NewPos[0].upper():
-            print("\nPawns must move straight forward unless capturing\n")
-            DisplayBoard(Board)
-            return
-        
-        if self.PawnHasntMoved() and self.Colour == "Black":
-            AllowedRankChanges = (-1,-2)
-        elif self.PawnHasntMoved() and self.Colour == "White":
-            AllowedRankChanges = (1,2)
-        elif (not self.PawnHasntMoved) and self.Colour == "Black":
-            AllowedRankChanges = (-1)
-        else:
-            AllowedRankChanges = (1)
+        global WhiteTurn
 
-        if (int(NewPos[1]) - self.Rank) not in AllowedRankChanges:
-            print("\nNewPos = ",NewPos[1])
-            print("\ncurrent rank =",self.Rank)
-            print((int(NewPos[1]) - self.Rank))
-            print("\nPawn is not allowed to move up that many ranks.")
+        if NewPos[0].upper() != self.File.upper():
+            print("\npawns must move in a straight line\n")
             DisplayBoard(Board)
             return
 
-        PieceSquareInd = self.FindSquareInd()
+        AllowedRankChanges = self.GetAllowedRankChanges()
 
-        NewSquareInd = NotationToIndex(NewPos[0],int(NewPos[1]))
+        RankChange = int(NewPos[1]) - self.Rank
 
-        NewRank = int(NewPos[1]) - self.Rank
+        if RankChange not in AllowedRankChanges:
+            print("\npawn can not move that many spaces up\n")
+            DisplayBoard(Board)
+            return
 
-        self.Rank = NewRank
+        NewSquareIndex = NotationToIndex(NewPos[0],int(NewPos[1]))
 
-        Board[PieceSquareInd].Piece = None
-        Board[NewSquareInd].Piece = self
+        if Board[NewSquareIndex].Piece != None:
+            print(f"\n{NewPos} occupied by another piece\n")
+            DisplayBoard(Board)
+            return
+
+        CurrentRank = self.Rank
+        CurrentIndex = self.FindSquareInd()
+
+        self.Rank = CurrentRank + RankChange
+
+        Board[CurrentIndex].Piece = None
+        Board[NewSquareIndex].Piece = self
 
         DisplayBoard(Board)
-        
+
+        WhiteTurn = not WhiteTurn
+
+      
         
 
 class Knight(Piece):
@@ -272,9 +287,3 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
-
-Pawn = Board[NotationToIndex("D",2)].Piece
-
-Pawn.Move("D4")
-
-
