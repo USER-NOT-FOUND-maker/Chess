@@ -169,6 +169,15 @@ class King(Piece):
     def __str__(self):
         return f"{self.Colour[0]}K"
 
+    def Move(self,NewPos):
+        RankChange = int(NewPos[0]) - self.Rank
+
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+
+        if FileChange != 0 and FileChange != 1 and FileChange != -1:
+            print("King cannot move that many spaces")
+            DisplayBoard(Board)
+
 
 
 class Square:
