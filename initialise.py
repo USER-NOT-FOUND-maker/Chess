@@ -129,6 +129,43 @@ class Knight(Piece):
     def __str__(self):
         return f"{self.Colour[0]}N"
 
+    def Move(self,NewPos):
+        
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+            print(f"{NewPos} currently taken up by another piece")
+            DisplayBoard(Board)
+            return
+
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+
+        if RankChange > 2 or RankChange < -2:
+            print("Knight can not move that many squares")
+            DisplayBoard(Board)
+            return
+
+        if FileChange > 2 or FileChange < -2:
+            print("Knight can not move that many squares")
+            DisplayBoard(Board)
+            return
+
+        if FileChange == RankChange:
+            print("Knight can not move diagonally")
+            DisplayBoard(Board)
+            return
+
+        Board[IndexToNotation(self.Rank,self.File)].Piece = None
+        
+        self.Rank = self.Rank + RankChange
+        self.File = self.File + FileChange
+
+        Board[IndexToNotation(NewPos[NewPos[0],int(NewPos[1]))].Piece = self
+
+        DisplayBoard(Board)
+
+        WhiteTurn = not WhiteTurn
+        
+
 
 
 class Bishop(Piece):
@@ -195,6 +232,8 @@ class King(Piece):
         self.Rank = int(NewPos[1])
     
         Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece = self
+
+        WhiteTurn = not WhiteTurn
         
 
 
