@@ -254,6 +254,8 @@ class Rook(Piece):
         return f"{self.Colour[0]}R"
 
     def Move(self,NewPos):
+        global WhiteTurn
+
         if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
             print("Entered file or rank invalid")
             DisplayBoard(Board)
@@ -269,17 +271,46 @@ class Rook(Piece):
             DisplayBoard(Board)
             return
 
-        VerticalMove = NewPos[0] != self.File
+        VerticalMove = NewPos[0] == self.File
 
         RankChange = int(NewPos[1]) - self.Rank
-        FileChange = Files.index(NewPos[1]) - files.index(self.File)
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        PositiveRankChange = RankChange > 0
+        PositiveFileChange = FileChange > 0
         
-        if VerticalMove:
-            TempRank = self.Rank
-        else:
-            TempFile = self.File
+        TempFile,TempRank = Files[Files.index(self.File)+1],self.Rank+1
 
+        if VerticalMove:
+            for i in range(RankChange-1):
+                if Board[NotationToIndex(self.File,TempRank)].Piece != None:
+                    print("Rook cannot move as it is obstructed by another piece")
+                    DisplayBoard(Board)
+                    return
+                if PositiveRankChange:
+                    TempRank += 1
+                else:
+                    TempRank -= 1
+        else:
+            for i in range(FileChange-1):
+                if Board[NotationToIndex(TempFile,self.Rank)].Piece != None:
+                    print("Rook cannot move as it is obstructed by another piece")
+                    DisplayBoard(Board)
+                    return
+                
+                if PositiveFileChange:
+                    TempFile = Files[Files.index(TempFile) + 1]
+                else:
+                    TempFile = Files[Files.index(TempFile) - 1]
         
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank = int(NewPos[1])
+        self.File = NewPos[0]
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+        DisplayBoard(Board)
+        
+        WhiteTurn = not WhiteTurn
 
 
 class Queen(Piece):
