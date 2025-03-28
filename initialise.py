@@ -1,3 +1,7 @@
+from os import system
+
+system("clear")
+
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
 WhiteTurn = True
@@ -356,3 +360,6 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
+
+while True:
+    pass
