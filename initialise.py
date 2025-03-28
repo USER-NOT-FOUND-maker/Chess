@@ -263,52 +263,24 @@ def ConstructBoard():
     Board = []
     for i in range(1,9):
         Board.append(Square(None,"A",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"B",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"C",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"D",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"E",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"F",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"G",i))
-    for i in range(1,9):                                                                                                                                                                                                                                Board.append(Square(None,"H",i))
+    for i in range(1,9):
+        Board.append(Square(None,"B",i))
+    for i in range(1,9):
+        Board.append(Square(None,"C",i))
+    for i in range(1,9):
+        Board.append(Square(None,"D",i))
+    for i in range(1,9):
+        Board.append(Square(None,"E",i))
+    for i in range(1,9):
+        Board.append(Square(None,"F",i))
+    for i in range(1,9):
+        Board.append(Square(None,"G",i))
+    for i in range(1,9):
+        Board.append(Square(None,"H",i))
 
     return Board
 
 def FillBoard(Board):
-    for i in range(8,16):
-        Board[i] = Square(Pawn("White",Files[i-8],2),Files[i-8],2)
- 
-    for i in range(48,56):
-        Board[i] = Square(Pawn("Black",Files[i-48],2),Files[i-48],2)
-
-    for i in range(8):
-
-        if i == 0 or i == 7:
-            Board[i] = Square(Rook("White",Files[i],1),Files[i],1)
-        elif i == 1 or i == 6:
-            Board[i] = Square(Knight("White",Files[i],1),Files[i],1)
-        elif i == 2 or i == 5:
-            Board[i] = Square(Bishop("White",Files[i],1),Files[i],1)
-        elif i == 3:
-            Board[i] = Square(Queen("White",Files[i],1),Files[i],1)
-        else:
-            Board[i] = Square(King("White",Files[i],1),Files[i],1)
-
-    for i in range(56,64):
-
-            if i == 56 or i == 63:
-                Board[i] = Square(Rook("Black",Files[i-56],1),Files[i-56],8)
-            elif i == 57 or i == 62:
-                Board[i] = Square(Knight("Black",Files[i-56],1),Files[i-56],8)
-            elif i == 58 or i == 61:
-                Board[i] = Square(Bishop("Black",Files[i-56],1),Files[i-56],8)
-            elif i == 59:
-                Board[i] = Square(Queen("Black",Files[i-56],1),Files[i-56],8)
-            else:
-                Board[i] = Square(King("Black",Files[i-56],1),Files[i-56],8)
-
-    return Board
-
-def FillBoardBack(Board):
     # White pieces
     Board[0].Piece = Rook("White", "A", 1)
     Board[1].Piece = Knight("White", "B", 1)
@@ -350,7 +322,7 @@ def FillBoardBack(Board):
     return Board
 
 
-Board = FillBoardBack(ConstructBoard())
+Board = FillBoard(ConstructBoard())
 
 def DisplayBoard(Board):
     for i in range(len(Board)):
