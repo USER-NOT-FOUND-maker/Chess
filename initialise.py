@@ -159,14 +159,12 @@ class Knight(Piece):
         self.Rank = self.Rank + RankChange
         self.File = self.File + FileChange
 
-        Board[IndexToNotation(NewPos[NewPos[0],int(NewPos[1]))].Piece = self
+        Board[IndexToNotation(NewPos[0],int(NewPos[1]))].Piece = self
 
         DisplayBoard(Board)
 
         WhiteTurn = not WhiteTurn
         
-
-
 
 class Bishop(Piece):
     def __init__(self,Colour,File,Rank):
