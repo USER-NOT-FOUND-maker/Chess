@@ -365,4 +365,5 @@ def DisplayBoard(Board):
 DisplayBoard(Board)
 
 ExampleKnight = Board[NotationToIndex("G",8)].Piece
-ExampleKnight.Move("G6")
+ExampleKnight.Move("F6")
+ExampleKnight.Move("D5")
