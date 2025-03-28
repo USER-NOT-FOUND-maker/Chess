@@ -85,6 +85,11 @@ class Pawn(Piece):
 
         global WhiteTurn
 
+        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):                     
+            print("invalid file or rank")                                               
+            DisplayBoard(Board)                                                                                                                                                     
+            return
+         
         if NewPos[0].upper() != self.File.upper():
             print("\npawns must move in a straight line\n")
             DisplayBoard(Board)
@@ -132,6 +137,11 @@ class Knight(Piece):
     def Move(self,NewPos):
         
         global WhiteTurn
+
+        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):                                                                                   
+            print("invalid file or rank")   
+            DisplayBoard(Board) 
+            return 
 
         if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
             print(f"{NewPos} currently taken up by another piece")
@@ -183,7 +193,13 @@ class Bishop(Piece):
     def __str__(self):
         return f"{self.Colour[0]}B"
 
+    def Move(self,NewPos):
+        global WhiteTurn
 
+        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
+            print("invalid file or rank")
+            DisplayBoard(Board)
+            return
 
 class Rook(Piece):
     def __init__(self,Colour,File,Rank):
@@ -215,6 +231,11 @@ class King(Piece):
 
     def Move(self,NewPos):
         global WhiteTurn
+
+        if (NewPos[0] not in Files) or (int(NewPos[1])) not in Ranks:           
+            print("invalid file or rank")  
+            DisplayBoard(Board)   
+            return 
 
         RankChange = int(NewPos[1]) - self.Rank
 
