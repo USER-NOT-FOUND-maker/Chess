@@ -99,6 +99,11 @@ class Pawn(Piece):
             DisplayBoard(Board)
             return
 
+        if Board[NotationToIndex(self.File,self.Rank+1)].Piece != None:
+            print("Pawn cannot move as something is in its way")
+            DisplayBoard(Board)
+            return
+
         AllowedRankChanges = self.GetAllowedRankChanges()
 
         RankChange = int(NewPos[1]) - self.Rank
@@ -205,6 +210,41 @@ class Bishop(Piece):
             DisplayBoard(Board)
             return
 
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+            print(f"{NewPos} already taken up by another piece")
+            DisplayBoard(Board)
+            return
+
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+
+        if abs(RankChange) != abs(FileChange):
+            print("Bishops must move diagonally")
+            DisplayBoard(Board)
+            return
+
+        TempRank,TempFile = self.Rank+1,Files.index(self.File)+1
+
+        for i in range(RankChange):
+            if Board[NotationToIndex(Files[TempFile],TempRank)].Piece != None:
+                print(f"{Files[TempFile]}{TempRank} currently taken up by {Board[NotationToIndex(Files[TempFile],TempRank)].Piece}")
+                print("Bishop cannot move as something is in its way")
+                DisplayBoard(Board)
+                return
+            TempRank += 1
+            TempFile += 1
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank += RankChange
+        self.File = NewPos[0]
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+
+        DisplayBoard(Board)
+
+        WhiteTurn = not WhiteTurn
+
 class Rook(Piece):
     def __init__(self,Colour,File,Rank):
         super().__init__(Colour,File,Rank)
@@ -213,6 +253,33 @@ class Rook(Piece):
     def __str__(self):
         return f"{self.Colour[0]}R"
 
+    def Move(self,NewPos):
+        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
+            print("Entered file or rank invalid")
+            DisplayBoard(Board)
+            return
+
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+            print(f"{NewPos} already taken up by another piece")
+            DisplayBoard(Board)
+            return
+
+        if (NewPos[0] != self.File) and int(NewPos[1]) != self.Rank:
+            print("Rooks can only move straight")
+            DisplayBoard(Board)
+            return
+
+        VerticalMove = NewPos[0] != self.File
+
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[1]) - files.index(self.File)
+        
+        if VerticalMove:
+            TempRank = self.Rank
+        else:
+            TempFile = self.File
+
+        
 
 
 class Queen(Piece):
@@ -360,6 +427,3 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
-
-while True:
-    pass
