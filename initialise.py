@@ -153,7 +153,7 @@ class Knight(Piece):
             DisplayBoard(Board)
             return
 
-        if FileChange > 1 or FileChange < -1:
+        if FileChange > 2  or FileChange < -2:
             print("Knight can not move that many squares")
             DisplayBoard(Board)
             return
@@ -363,7 +363,3 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
-
-ExampleKnight = Board[NotationToIndex("G",8)].Piece
-ExampleKnight.Move("F6")
-ExampleKnight.Move("D5")
