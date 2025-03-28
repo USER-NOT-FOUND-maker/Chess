@@ -131,6 +131,8 @@ class Knight(Piece):
 
     def Move(self,NewPos):
         
+        global WhiteTurn
+
         if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
             print(f"{NewPos} currently taken up by another piece")
             DisplayBoard(Board)
@@ -139,12 +141,19 @@ class Knight(Piece):
         RankChange = int(NewPos[1]) - self.Rank
         FileChange = Files.index(NewPos[0]) - Files.index(self.File)
 
+    
+
         if RankChange > 2 or RankChange < -2:
             print("Knight can not move that many squares")
             DisplayBoard(Board)
             return
 
-        if FileChange > 2 or FileChange < -2:
+        if FileChange == 0:
+            print("Knight must change files")
+            DisplayBoard(Board)
+            return
+
+        if FileChange > 1 or FileChange < -1:
             print("Knight can not move that many squares")
             DisplayBoard(Board)
             return
@@ -154,12 +163,12 @@ class Knight(Piece):
             DisplayBoard(Board)
             return
 
-        Board[IndexToNotation(self.Rank,self.File)].Piece = None
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
         
         self.Rank = self.Rank + RankChange
-        self.File = self.File + FileChange
+        self.File = NewPos[0]
 
-        Board[IndexToNotation(NewPos[0],int(NewPos[1]))].Piece = self
+        Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece = self
 
         DisplayBoard(Board)
 
@@ -205,6 +214,8 @@ class King(Piece):
         return f"{self.Colour[0]}K"
 
     def Move(self,NewPos):
+        global WhiteTurn
+
         RankChange = int(NewPos[1]) - self.Rank
 
         FileChange = Files.index(NewPos[0]) - Files.index(self.File)
@@ -352,3 +363,6 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
+
+ExampleKnight = Board[NotationToIndex("G",8)].Piece
+ExampleKnight.Move("G6")
