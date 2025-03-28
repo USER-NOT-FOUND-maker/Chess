@@ -170,13 +170,32 @@ class King(Piece):
         return f"{self.Colour[0]}K"
 
     def Move(self,NewPos):
-        RankChange = int(NewPos[0]) - self.Rank
+        RankChange = int(NewPos[1]) - self.Rank
 
         FileChange = Files.index(NewPos[0]) - Files.index(self.File)
 
         if FileChange != 0 and FileChange != 1 and FileChange != -1:
             print("King cannot move that many spaces")
             DisplayBoard(Board)
+            return
+
+        if RankChange < -1 or RankChange > 1:
+            print("King cannot move that many spaces")
+            DisplayBoard(Board)
+            return
+
+        if Board[NotationToIndex(NewPos[0].upper(),int(NewPos[1]))].Piece != None:
+            print(f"{NewPos} already taken up by another piece")
+            DisplayBoard(Board)
+            return
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.File = NewPos[0]
+        self.Rank = int(NewPos[1])
+    
+        Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece = self
+        
 
 
 
