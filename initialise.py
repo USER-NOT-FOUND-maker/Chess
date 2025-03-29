@@ -458,9 +458,3 @@ def DisplayBoard(Board):
             print(Board[i],end="")
 
     print()
-
-DisplayBoard(Board)
-
-ExampleQueen = Board[NotationToIndex("D",1)].Piece
-
-DisplayBoard(Board)
