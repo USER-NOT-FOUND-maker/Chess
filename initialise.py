@@ -227,7 +227,6 @@ class Bishop(Piece):
 
         for i in range(RankChange):
             if Board[NotationToIndex(Files[TempFile],TempRank)].Piece != None:
-                print(f"{Files[TempFile]}{TempRank} currently taken up by {Board[NotationToIndex(Files[TempFile],TempRank)].Piece}")
                 print("Bishop cannot move as something is in its way")
                 DisplayBoard(Board)
                 return
@@ -244,6 +243,8 @@ class Bishop(Piece):
         DisplayBoard(Board)
 
         WhiteTurn = not WhiteTurn
+
+        return 1
 
 class Rook(Piece):
     def __init__(self,Colour,File,Rank):
@@ -312,6 +313,8 @@ class Rook(Piece):
         
         WhiteTurn = not WhiteTurn
 
+        return 1
+
 
 class Queen(Piece):
     def __init__(self,Colour,File,Rank):
@@ -321,6 +324,41 @@ class Queen(Piece):
     def __str__(self):
         return f"{self.Colour[0]}Q"
 
+    def Move(self,NewPos):
+        global WhiteTurn
+
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+
+        def MoveNotStraight(NewPos,RankChange,FileChange):
+            if NewPos[0] == self.File:
+                return True
+            elif int(NewPos[1]) == self.Rank:
+                return True
+            elif RankChange == FileChange:
+                return True
+            return False
+
+        if not MoveNotStraight(NewPos,RankChange,FileChange):
+            print("Queen can not move like that")
+            DisplayBoard(Board)
+            return
+
+        MoveLikeRook = (NewPos[0] == self.File) != (int(NewPos[1]) == self.Rank)
+    
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank = int(NewPos[1])
+        self.File = NewPos[0]
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+
+        DisplayBoard(Board)
+
+        WhiteTurn = not WhiteTurn
+
+            
 
 
 class King(Piece):
@@ -367,7 +405,7 @@ class King(Piece):
 
         WhiteTurn = not WhiteTurn
         
-
+        DisplayBoard(Board)
 
 
 class Square:
@@ -458,3 +496,13 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
+
+Board[NotationToIndex("D",2)].Piece = None
+Board[NotationToIndex("E",2)].Piece = None
+Board[NotationToIndex("F",2)].Piece = None
+
+ExampleQueen = Board[NotationToIndex("D",1)].Piece
+
+ExampleQueen.Move("D5")
+
+ExampleQueen.Move("G5")
