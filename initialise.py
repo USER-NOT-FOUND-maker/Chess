@@ -1,7 +1,5 @@
 from os import system
 
-system("clear")
-
 CODESUCCESS = 0
 ERRCODEOBSTRUCTION = 1
 ERRCODETAKENSPACE = 2
