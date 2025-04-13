@@ -34,24 +34,69 @@ def GetSquare(prompt = "enter a chess square: ",FailedPrompt = "invalid square, 
 
     return Square.upper()
 
+
 def GetMove():
     MovingPieceSquare = GetSquare(prompt = "enter the square of the piece that is moving: ")
 
     while Board[NotationToIndex(MovingPieceSquare[0],MovingPieceSquare[1])].Piece == None:
-        print(f"{MovingPieceSquare} does not have a piece on it, pick another square")
+        print(f"\n{MovingPieceSquare} does not have a piece on it, pick another square\n")
         MovingPieceSquare = GetSquare(prompt = "enter the square of the piece that is moving: ")
     
     ResultSquare = GetSquare(prompt = "enter the square that the piece is moving to: ")
 
+    while Board[NotationToIndex(ResultSquare[0],int(ResultSquare[1]))].Piece.Colour != CorrectColour:
+        print("\ncan not move that piece as it is currently not that pieces turn\n")
+        ResultSquare = GetSquare(prompt = "enter the square that the piece is moving to: ")
+
     return MovingPieceSquare,ResultSquare
 
-def ExecuteMove(():
+"""
+for the function "ExecuteMove" we need to know this
+
+CODESUCCESS = 0                                                                                                                                                                                                                                 ERRCODEOBSTRUCTION = 1                                                                                                                                                                                                                          ERRCODEINVALIDMOVEMENT = 2                                                                                                                                                                                                                      ERRCODECHECK = 3                                                                                                                                                                                                                                ERRCODESQUAREDOESNTEXIST = 4
+"""
+
+def ExecuteMove():
     MovingPieceSquare,ResultSquare = GetMove()
+    TempBoard = Board
 
     MovingPiece = Board[NotationToIndex(MovingPieceSquare[0],int(MovingPieceSquare[1]))].Piece
 
-    ResultingCode = MovingPiece.Move(ResultSquare)
+    ResultingCode = MovingPiece.Move(ResultSquare,Board)
 
+    match ResultingCode:
+        case CODESUCCESS:
+            system("clear")
+            DisplayBoard(Board)
+            WhiteTurn = not WhiteTurn
+            if WhiteTurn:
+                CorrectColour = "White"
+            else:
+                CorrectColour = "Black"
+            
+        case ERRCODEOBSTRUCTION:
+            system("clear")
+            print("piece could not move because there was another piece in its way")
+            DisplayBoard(Board)
+            
+        case ERRCODEINVALIDMOVEMENT:
+            system("clear")
+            print("piece could not move because it did not follow the rules of how it moves")
+            DisplayBoard(Board)
+            
+        case ERRCODECHECK:
+            system("clear")
+            print("piece could not move because it caused a check on its own king")
+            DisplayBoard(Board)
+    
+        case ERRCODESQUAREDOESNTEXIST:
+            system("clear")
+            print("piece could not move because the given square does not exist")
+            DisplayBoard(Board)
+            
+
+while True:
+    ExecuteMove()
     
 
 """

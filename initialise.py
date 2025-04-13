@@ -2,10 +2,9 @@ from os import system
 
 CODESUCCESS = 0
 ERRCODEOBSTRUCTION = 1
-ERRCODETAKENSPACE = 2
-ERRCODEINVALIDMOVEMENT = 3
-ERRCODECHECK = 4
-ERRCODESQUAREDOESNTEXIST = 5
+ERRCODEINVALIDMOVEMENT = 2
+ERRCODECHECK = 3
+ERRCODESQUAREDOESNTEXIST = 4
 
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
@@ -103,7 +102,9 @@ class Knight(Piece):
         return f"{self.Colour[0]}N"
 
     def Move(self,NewPos,Board):
-        pass
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        print(f"RankChange = {RankChange}\nFileChange = {FileChange}\n")
 
 class Bishop(Piece):
     def __init__(self,Colour,File,Rank):
