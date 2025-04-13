@@ -91,41 +91,7 @@ class Pawn(Piece):
         return f"{self.Colour[0]}p"
     
     def Move(self,NewPos,Board):
-
-        global WhiteTurn
-
-        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
-            return ERRCODESQUAREDOESNTEXIST
-         
-        if NewPos[0].upper() != self.File.upper():
-            return ERRCODEINVALIDMOVEMENT
-
-        if Board[NotationToIndex(self.File,self.Rank+1)].Piece != None:
-            return ERRCODEOBSTRUCTION
-
-        AllowedRankChanges = self.GetAllowedRankChanges()
-
-        RankChange = int(NewPos[1]) - self.Rank
-
-        if RankChange not in AllowedRankChanges:
-            return ERRCODEINVALIDMOVEMENT
-
-        NewSquareIndex = NotationToIndex(NewPos[0],int(NewPos[1]))
-
-        if Board[NewSquareIndex].Piece != None:
-            return ERRCODETAKENSPACE
-        
-        CurrentRank = self.Rank
-        CurrentIndex = self.FindSquareInd()
-
-        self.Rank = CurrentRank + RankChange
-
-        Board[CurrentIndex].Piece = None
-        Board[NewSquareIndex].Piece = self
-
-        WhiteTurn = not WhiteTurn
-
-        return CODESUCCESS  
+        pass
         
 
 class Knight(Piece):
@@ -137,40 +103,7 @@ class Knight(Piece):
         return f"{self.Colour[0]}N"
 
     def Move(self,NewPos,Board):
-        
-        global WhiteTurn
-
-        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):                                                                                   
-            return ERRCODESQUAREDOESNTEXIST
-
-        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-            return ERRCODETAKENSPACE
-
-        RankChange = int(NewPos[1]) - self.Rank
-        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
-
-        if RankChange > 2 or RankChange < -2:
-            return ERRCODEINVALIDMOVEMENT
-
-        if FileChange == 0:
-            return ERRCODEINVALIDMOVEMENT
-
-        if FileChange > 2  or FileChange < -2:
-            return ERRCODEINVALIDMOVEMENT
-
-        if FileChange == RankChange:
-            return ERRCODEINVALIDMOVEMENT
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
-        
-        self.Rank = self.Rank + RankChange
-        self.File = NewPos[0]
-
-        Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece = self
-
-        WhiteTurn = not WhiteTurn
-
-        return CODESUCCESS       
+        pass
 
 class Bishop(Piece):
     def __init__(self,Colour,File,Rank):
@@ -181,38 +114,7 @@ class Bishop(Piece):
         return f"{self.Colour[0]}B"
 
     def Move(self,NewPos,Board):
-        global WhiteTurn
-
-        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
-            return ERRCODESQUAREDOESNTEXIST
-
-        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-            return ERRCODETAKENSPACE
-
-        RankChange = int(NewPos[1]) - self.Rank
-        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
-
-        if abs(RankChange) != abs(FileChange):
-            return ERRCODEINVALIDMOVEMENT
-
-        TempRank,TempFile = self.Rank+1,Files.index(self.File)+1
-
-        for i in range(RankChange):
-            if Board[NotationToIndex(Files[TempFile],TempRank)].Piece != None:
-                return ERRCODEOBSTRUCTION
-            TempRank += 1
-            TempFile += 1
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
-
-        self.Rank += RankChange
-        self.File = NewPos[0]
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = self
-
-        WhiteTurn = not WhiteTurn
-
-        return CODESUCCESS
+        pass
 
 class Rook(Piece):
     def __init__(self,Colour,File,Rank):
@@ -223,54 +125,7 @@ class Rook(Piece):
         return f"{self.Colour[0]}R"
 
     def Move(self,NewPos,Board):
-        global WhiteTurn
-
-        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
-            return ERRCODESQUAREDOESNTEXIST
-
-        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-            return ERRCODETAKENSPACE
-
-        if (NewPos[0] != self.File) and int(NewPos[1]) != self.Rank:
-            return ERRCODEINVALIDMOVEMENT
-
-        VerticalMove = NewPos[0] == self.File
-
-        RankChange = int(NewPos[1]) - self.Rank
-        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
-        PositiveRankChange = RankChange > 0
-        PositiveFileChange = FileChange > 0
-        
-        TempFile,TempRank = Files[Files.index(self.File)+1],self.Rank+1
-
-        if VerticalMove:
-            for i in range(RankChange-1):
-                if Board[NotationToIndex(self.File,TempRank)].Piece != None:
-                    return ERRCODEOBSTRUCTION
-                if PositiveRankChange:
-                    TempRank += 1
-                else:
-                    TempRank -= 1
-        else:
-            for i in range(FileChange-1):
-                if Board[NotationToIndex(TempFile,self.Rank)].Piece != None:
-                    return ERRCODEOBSTRUCTION
-                
-                if PositiveFileChange:
-                    TempFile = Files[Files.index(TempFile) + 1]
-                else:
-                    TempFile = Files[Files.index(TempFile) - 1]
-        
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
-
-        self.Rank = int(NewPos[1])
-        self.File = NewPos[0]
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = self
-        
-        WhiteTurn = not WhiteTurn
-
-        return CODESUCCESS
+        pass
 
 
 class Queen(Piece):
@@ -282,53 +137,7 @@ class Queen(Piece):
         return f"{self.Colour[0]}Q"
 
     def Move(self,NewPos,Board):
-        global WhiteTurn
-
-        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-            return ERRCODETAKENSPACE
-
-        RankChange = int(NewPos[1]) - self.Rank
-        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
-
-        def MoveNotStraight(NewPos,RankChange,FileChange):
-            if NewPos[0] == self.File:
-                return True
-            elif int(NewPos[1]) == self.Rank:
-                return True
-            elif RankChange == FileChange:
-                return True
-            return False
-
-        if not MoveNotStraight(NewPos,RankChange,FileChange):
-            return ERRCODEINVALIDMOVEMENT
-
-        MoveLikeRook = (NewPos[0] == self.File) != (int(NewPos[1]) == self.Rank)
-
-        TempBoard = Board
-
-        if MoveLikeRook:
-            TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
-            ExampleRook = TempBoard[NotationToIndex(self.File,self.Rank)].Piece
-
-            if ExampleRook.Move(NewPos,TempBoard) == ERRCODEOBSTRUCTION:
-                return ERRCODEOBSTRUCTION
-        else:
-            TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
-            ExampleBishop = TempBoard[NotationToIndex(self.File,self.Rank)].Piece
-
-            if ExampleBishop.Move(NewPos,TempBoard) == ERRCODEOBSTRUCTION:
-                return ERRCODEOBSTRUCTION
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
-
-        self.Rank = int(NewPos[1])
-        self.File = NewPos[0]
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = self
-
-        WhiteTurn = not WhiteTurn
-
-        return CODESUCCESS          
+        pass
 
 
 class King(Piece):
@@ -340,34 +149,7 @@ class King(Piece):
         return f"{self.Colour[0]}K"
 
     def Move(self,NewPos,Board):
-        global WhiteTurn
-
-        if (NewPos[0] not in Files) or (int(NewPos[1])) not in Ranks:              
-            return ERRCODESQUAREDOESNTEXIST
-
-        RankChange = int(NewPos[1]) - self.Rank
-
-        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
-
-        if FileChange != 0 and FileChange != 1 and FileChange != -1:
-            return ERRCODEINVALIDMOVEMENT
-
-        if RankChange < -1 or RankChange > 1:
-            return ERRCODEINVALIDMOVEMENT
-
-        if Board[NotationToIndex(NewPos[0].upper(),int(NewPos[1]))].Piece != None:
-            return ERRCODETAKENSPACE
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
-
-        self.File = NewPos[0]
-        self.Rank = int(NewPos[1])
-    
-        Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece = self
-
-        WhiteTurn = not WhiteTurn
-
-        return CODESUCCESS
+        pass
 
 
 class Square:
