@@ -45,8 +45,14 @@ def GetMove():
 
     return MovingPieceSquare,ResultSquare
 
-while True:
-    print(GetMove)
+def ExecuteMove(():
+    MovingPieceSquare,ResultSquare = GetMove()
+
+    MovingPiece = Board[NotationToIndex(MovingPieceSquare[0],int(MovingPieceSquare[1]))].Piece
+
+    ResultingCode = MovingPiece.Move(ResultSquare)
+
+    
 
 """
 
