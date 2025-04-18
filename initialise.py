@@ -1,5 +1,6 @@
 from os import system
 
+
 CODESUCCESS = 0
 ERRCODEOBSTRUCTION = 1
 ERRCODEINVALIDMOVEMENT = 2
@@ -13,6 +14,8 @@ WhiteTurn = True
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
 def NotationToIndex(File,Rank):
+    Rank = int(Rank)
+
     RankIndex = {
                 1: [i for i in range(0, 8)],
                 2: [i for i in range(8, 16)],
@@ -90,8 +93,20 @@ class Pawn(Piece):
         return f"{self.Colour[0]}p"
     
     def Move(self,NewPos,Board):
-        pass
+
+        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+            print(f"files is {Files}\nRanks is {Ranks}\nNewPos[0] was {NewPos[0]}\nNewPos[1] was {NewPos[1]}\n")
+            return ERRCODESQUAREDOESNTEXIST
+
+        AllowedRankChanges = self.GetAllowedRankChanges()       
+
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        RankChange = int(NewPos[1]) - self.Rank
         
+        if RankChange not in AllowedRankChanges:
+                return ERRCODEINVALIDMOVEMENT
+
+        return CODESUCCESS
 
 class Knight(Piece):
     def __init__(self,Colour,File,Rank):
@@ -239,3 +254,5 @@ def DisplayBoard(Board):
             print(Board[i],end="")
 
     print()
+
+DisplayBoard(Board)

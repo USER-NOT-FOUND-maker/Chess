@@ -26,7 +26,7 @@ def ValidateSquare(Square):
 
     return CorrectRank and RankIsNum and CorrectFile
 
-def GetSquare(prompt = "enter a chess square: ",FailedPrompt = "invalid square, try again: "):
+def GetSquare(prompt = "\nenter a chess square: ",FailedPrompt = "\ninvalid square, try again: "):
     Square = input(prompt)
 
     while not ValidateSquare(Square):
@@ -34,19 +34,29 @@ def GetSquare(prompt = "enter a chess square: ",FailedPrompt = "invalid square, 
 
     return Square.upper()
 
+def IsValidMovingPieceSquare(MovingPieceSquare,CorrectColour):
+    
+    PieceOnSquare = Board[NotationToIndex(MovingPieceSquare[0],MovingPieceSquare[1])].Piece != None
+    if not PieceOnSquare:
+        return False
+    # need an early return because if we dont and there is no piece on that square we get an error when checking if the piece is the correct colour
+    PieceIsCorrectColour = Board[NotationToIndex(MovingPieceSquare[0],int(MovingPieceSquare[1]))].Piece.Colour == CorrectColour
+    return PieceIsCorrectColour
 
 def GetMove():
-    MovingPieceSquare = GetSquare(prompt = "enter the square of the piece that is moving: ")
+    global WhiteTurn
 
-    while Board[NotationToIndex(MovingPieceSquare[0],MovingPieceSquare[1])].Piece == None:
-        print(f"\n{MovingPieceSquare} does not have a piece on it, pick another square\n")
-        MovingPieceSquare = GetSquare(prompt = "enter the square of the piece that is moving: ")
-    
+    if WhiteTurn:
+        CorrectColour = "White"
+    else:
+        CorrectColour = "Black"
+
+    MovingPieceSquare = GetSquare(prompt = "\nenter the square of the piece that is moving: ") 
+   
+    while not IsValidMovingPieceSquare(MovingPieceSquare,CorrectColour):
+        MovingPieceSquare = GetSquare(prompt = "\ninvalid square for some reason, enter another moving piece square: ")
+
     ResultSquare = GetSquare(prompt = "enter the square that the piece is moving to: ")
-
-    while Board[NotationToIndex(ResultSquare[0],int(ResultSquare[1]))].Piece.Colour != CorrectColour:
-        print("\ncan not move that piece as it is currently not that pieces turn\n")
-        ResultSquare = GetSquare(prompt = "enter the square that the piece is moving to: ")
 
     return MovingPieceSquare,ResultSquare
 
@@ -57,42 +67,44 @@ CODESUCCESS = 0                                                                 
 """
 
 def ExecuteMove():
+    global WhiteTurn
+
     MovingPieceSquare,ResultSquare = GetMove()
     TempBoard = Board
 
     MovingPiece = Board[NotationToIndex(MovingPieceSquare[0],int(MovingPieceSquare[1]))].Piece
 
     ResultingCode = MovingPiece.Move(ResultSquare,Board)
-
-    match ResultingCode:
-        case CODESUCCESS:
-            system("clear")
-            DisplayBoard(Board)
-            WhiteTurn = not WhiteTurn
-            if WhiteTurn:
-                CorrectColour = "White"
-            else:
-                CorrectColour = "Black"
-            
-        case ERRCODEOBSTRUCTION:
-            system("clear")
-            print("piece could not move because there was another piece in its way")
-            DisplayBoard(Board)
-            
-        case ERRCODEINVALIDMOVEMENT:
-            system("clear")
-            print("piece could not move because it did not follow the rules of how it moves")
-            DisplayBoard(Board)
-            
-        case ERRCODECHECK:
-            system("clear")
-            print("piece could not move because it caused a check on its own king")
-            DisplayBoard(Board)
     
-        case ERRCODESQUAREDOESNTEXIST:
-            system("clear")
-            print("piece could not move because the given square does not exist")
-            DisplayBoard(Board)
+    
+    if ResultingCode == CODESUCCESS:
+    #    system("clear")
+        DisplayBoard(Board)
+        WhiteTurn = not WhiteTurn
+        if WhiteTurn:
+            CorrectColour = "White"
+        else:
+            CorrectColour = "Black"
+            
+    elif ResultingCode == ERRCODEOBSTRUCTION:
+   #     system("clear")
+        print("\npiece could not move because there was another piece in its way\n")
+        DisplayBoard(Board)
+            
+    elif ResultingCode == ERRCODEINVALIDMOVEMENT:
+  #      system("clear")
+        print("\npiece could not move because it did not follow the rules of how it moves\n")
+        DisplayBoard(Board)
+            
+    elif ResultingCode == ERRCODECHECK:
+ #       system("clear")
+        print("\npiece could not move because it caused a check on its own king\n")
+        DisplayBoard(Board)
+    
+    elif ResultingCode == ERRCODESQUAREDOESNTEXIST:
+#        system("clear")
+        print("\npiece could not move because the given square does not exist\n")
+        DisplayBoard(Board)
             
 
 while True:
