@@ -103,9 +103,15 @@ class Pawn(Piece):
         FileChange = Files.index(NewPos[0]) - Files.index(self.File)
         RankChange = int(NewPos[1]) - self.Rank
         
-        if RankChange not in AllowedRankChanges:
+        if (RankChange not in AllowedRankChanges) or (FileChange not in (1,0,-1)):
                 return ERRCODEINVALIDMOVEMENT
 
+        if (FileChange != 0) and Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece == None:
+                return ERRCODEINVALIDMOVEMENT
+
+        if (RankChange == 2 or RankChange == -2) and (Board[NotationToIndex(self.File,(self.Rank + (RankChange -1)))].Piece != None):
+                return ERRCODEOBSTRUCTION
+        
         return CODESUCCESS
 
 class Knight(Piece):
