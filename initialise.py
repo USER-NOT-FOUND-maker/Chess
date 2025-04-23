@@ -1,6 +1,5 @@
 from os import system
 
-
 CODESUCCESS = 0
 ERRCODEOBSTRUCTION = 1
 ERRCODEINVALIDMOVEMENT = 2
@@ -109,8 +108,22 @@ class Pawn(Piece):
         if (FileChange != 0) and Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece == None:
                 return ERRCODEINVALIDMOVEMENT
 
-        if (RankChange == 2 or RankChange == -2) and (Board[NotationToIndex(self.File,(self.Rank + (RankChange -1)))].Piece != None):
-                return ERRCODEOBSTRUCTION
+ 
+        if RankChange > 1 or RankChange < -1:
+                if RankChange > 0:
+                        if Board[NotationToIndex(self.File,(self.Rank + (RankChange - 1)))].Piece:
+                                return ERRCODEOBSTRUCTION
+                else:
+                        if Board[NotationToIndex(self.File,(self.Rank + (RankChange + 1)))].Piece: 
+                                return ERRCODEOBSTRUCTION
+
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank += RankChange
+        self.File = Files[Files.index(self.File) + FileChange]
+        
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
         
         return CODESUCCESS
 
