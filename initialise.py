@@ -312,19 +312,17 @@ class Queen(Piece):
         RankChange = int(NewPos[1]) - self.Rank
         FileChange = Files.index(NewPos[0]) - Files.index(self.File)
 
-        TempBoard = Board[:]
+        TempBoard = [i for i in Board]
 
         if abs(FileChange) == abs(RankChange):
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
                 ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
         elif (FileChange == 0 and RankChange != 0) or (FileChange != 0 and RankChange == 0):
-                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
+                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
                 ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
         else:
-                print(f"File change is {FileChange}\n RankChange is {RankChange}")
                 return ERRCODEINVALIDMOVEMENT
         
-        print(ValidMove)
 
         if ValidMove == ERRCODEOBSTRUCTION:
                 return ERRCODEOBSTRUCTION
