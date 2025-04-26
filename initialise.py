@@ -348,7 +348,26 @@ class King(Piece):
         return f"{self.Colour[0]}K"
 
     def Move(self,NewPos,Board):
-        pass
+        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+                return ERRCODESQUAREDOESNTEXIST
+
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+
+        AcceptedChanges = (1,0,-1)
+
+        if RankChange not in AcceptedChanges or FileChange not in AcceptedChanges:
+                return ERRCODEINVALIDMOVEMENT
+
+        
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank += RankChange
+        self.File = Files[Files.index(self.File) + FileChange]
+        
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+        
+        return CODESUCCESS 
 
 
 class Square:
