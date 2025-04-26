@@ -1,5 +1,7 @@
 from os import system
 
+# do we need these error codes? no. do we have these error codes? yes. do i want these error codes? yes. stop questioning everything i do, this is MY repositry, this is MY code and this is MY life i make MY OWN decisions and you get NO say in that
+
 CODESUCCESS = 0
 ERRCODEOBSTRUCTION = 1
 ERRCODEINVALIDMOVEMENT = 2
@@ -43,6 +45,8 @@ def NotationToIndex(File,Rank):
         if i in FileIndex[File]:
             return i
 
+# yes that function is insanely inefficent, time wasting, unnecasarily complex and memory inefficent, but do we really care about that?
+
 class InvalidPieceInitialiser(ValueError):
     def __init__(self,message):
         self.Message = message
@@ -60,7 +64,7 @@ class Piece:
         self.File = File
         self.Rank = Rank
         self.Colour = Colour
-        self.Position = (File,Rank)
+        self.Position = (File,Rank) # we never use this attribute btw, i js thought its cool to have this here
     
     def FindSquareInd(self):
         for i in range(len(Board)):
@@ -92,11 +96,16 @@ class Pawn(Piece):
         return f"{self.Colour[0]}p"
     
     def Move(self,NewPos,Board):
+# genuinely, i dont understand how the simplest piece in the game has the most complex implementation in code
+
         global AllMoves        
 
 
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
             return ERRCODESQUAREDOESNTEXIST
+
+        if NewPos[0] == self.File and int(NewPos[1]) == int(self.Rank):
+                return ERRCODEINVALIDMOVEMENT        
 
         AllowedRankChanges = self.GetAllowedRankChanges()       
 
@@ -167,7 +176,7 @@ class Knight(Piece):
 
         if (RankChange not in (1,2,-1,-2) or FileChange not in (1,2,-1,-2)) or (abs(RankChange) == abs(FileChange)):
                 return ERRCODEINVALIDMOVEMENT
-
+        
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -187,8 +196,49 @@ class Bishop(Piece):
         return f"{self.Colour[0]}B"
 
     def Move(self,NewPos,Board):
-        pass
+        if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
+                return ERRCODESQUAREDOESNTEXIST
 
+        if NewPos[0] == self.File and int(NewPos[1]) == int(self.Rank):
+                return ERRCODEINVALIDMOVEMENT        
+
+
+        FileChange = Files.index(self.File) - Files.index(NewPos[0])
+        RankChange = self.Rank - int(NewPos[1])
+
+        if abs(FileChange) != abs(RankChange):
+                return ERRCODEINVALIDMOVEMENT
+
+        TempRank = self.Rank
+        TempFile = self.File
+
+        if RankChange > 0:
+                AddToRank = 1
+        else:
+                AddToRank = -1
+
+        if FileChange > 0:
+                AddToFile = 1
+        else:
+                AddToFile = -1
+
+
+
+        for i in range(RankChange): # incase you cant tell already, we can switch RankChange for FileChange and it makes no difference, because theyre the same...
+                if Board[NotationToIndex(TempFile,TempRank)].Piece != None:
+                        return ERRCODEOBSTRUCTION
+                TempRank += AddToRank
+                TempFile = Files[Files.index(TempFile) + AddToFile]
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank += RankChange
+        self.File = Files[Files.index(self.File) + FileChange]
+        
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+
+        return CODESUCCESS
+                         
 class Rook(Piece):
     def __init__(self,Colour,File,Rank):
         super().__init__(Colour,File,Rank)
@@ -303,12 +353,16 @@ def FillBoard(Board):
 Board = FillBoard(ConstructBoard())
 
 def DisplayBoard(Board):
+    print("     ",end = "")
+    for i in range(8):
+        print(Files[i], end = "\u200B"*3)
     for i in range(len(Board)):
         if i % 8 != 0 and i != 0:
-            print(Board[i],end="")
+            print(f"{Board[i]}",end="")
         else:
             print()
-            print(Board[i],end="")
+            print(f"{(i // 8)+1} ",end = " ")
+            print(f"{Board[i]}",end="")
 
     print()
 
