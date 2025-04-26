@@ -68,8 +68,11 @@ CODESUCCESS = 0                                                                 
 
 def ExecuteMove():
     global WhiteTurn
+<<<<<<< HEAD
     global MovesTaken
     global EnPassantBoardCheck
+=======
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
 
     MovingPieceSquare,ResultSquare = GetMove()
     TempBoard = Board
@@ -87,10 +90,14 @@ def ExecuteMove():
             CorrectColour = "White"
         else:
             CorrectColour = "Black"
+<<<<<<< HEAD
 
         MovesTaken += 1
 
 
+=======
+            
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
     elif ResultingCode == ERRCODEOBSTRUCTION:
    #     system("clear")
         print("\npiece could not move because there was another piece in its way\n")
@@ -112,7 +119,16 @@ def ExecuteMove():
         DisplayBoard(Board)
             
 
+<<<<<<< HEAD
 """
+=======
+while True:
+    ExecuteMove()
+    
+
+"""
+
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
 attributes we need in Notation class
 - captured (boolean)
 - new position (string of length 2)

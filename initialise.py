@@ -9,7 +9,10 @@ ERRCODESQUAREDOESNTEXIST = 4
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
 WhiteTurn = True
+<<<<<<< HEAD
 MovesTaken = 0
+=======
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
 
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
@@ -93,9 +96,15 @@ class Pawn(Piece):
         return f"{self.Colour[0]}p"
     
     def Move(self,NewPos,Board):
+<<<<<<< HEAD
         global AllMoves        
 
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+=======
+
+        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+            print(f"files is {Files}\nRanks is {Ranks}\nNewPos[0] was {NewPos[0]}\nNewPos[1] was {NewPos[1]}\n")
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
             return ERRCODESQUAREDOESNTEXIST
 
         AllowedRankChanges = self.GetAllowedRankChanges()       
@@ -106,6 +115,7 @@ class Pawn(Piece):
         if (RankChange not in AllowedRankChanges) or (FileChange not in (1,0,-1)):
                 return ERRCODEINVALIDMOVEMENT
 
+<<<<<<< HEAD
         
         if (FileChange != 0) and Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece == None:
                 """
@@ -126,6 +136,11 @@ class Pawn(Piece):
                 """
                 return ERRCODEINVALIDMOVEMENT
         
+=======
+        if (FileChange != 0) and Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece == None:
+                return ERRCODEINVALIDMOVEMENT
+
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
  
         if RankChange > 1 or RankChange < -1:
                 if RankChange > 0:
@@ -136,8 +151,11 @@ class Pawn(Piece):
                                 return ERRCODEOBSTRUCTION
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -156,6 +174,7 @@ class Knight(Piece):
         return f"{self.Colour[0]}N"
 
     def Move(self,NewPos,Board):
+<<<<<<< HEAD
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
         
@@ -174,6 +193,12 @@ class Knight(Piece):
         Board[NotationToIndex(self.File,self.Rank)].Piece = self
 
         return CODESUCCESS
+=======
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        print(f"RankChange = {RankChange}\nFileChange = {FileChange}\n")
+
+>>>>>>> 83204c112ec4e3dc9d8e7a6e1d5b9c42cb7d068d
 class Bishop(Piece):
     def __init__(self,Colour,File,Rank):
         super().__init__(Colour,File,Rank)
