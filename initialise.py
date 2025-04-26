@@ -294,7 +294,8 @@ class Rook(Piece):
         self.File = Files[Files.index(self.File) + FileChange]
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = self
-        
+    
+        return CODESUCCESS
 
 class Queen(Piece):
     def __init__(self,Colour,File,Rank):
@@ -305,8 +306,40 @@ class Queen(Piece):
         return f"{self.Colour[0]}Q"
 
     def Move(self,NewPos,Board):
-        pass
+        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+                return ERRCODESQUAREDOESNTEXIST
+        
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
 
+        TempBoard = Board[:]
+
+        if abs(FileChange) == abs(RankChange):
+                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
+                ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
+        elif (FileChange == 0 and RankChange != 0) or (FileChange != 0 and RankChange == 0):
+                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
+                ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
+        else:
+                print(f"File change is {FileChange}\n RankChange is {RankChange}")
+                return ERRCODEINVALIDMOVEMENT
+        
+        print(ValidMove)
+
+        if ValidMove == ERRCODEOBSTRUCTION:
+                return ERRCODEOBSTRUCTION
+        elif ValidMove == ERRCODEINVALIDMOVEMENT:
+                return ERRCODEINVALIDMOVEMENT
+        
+         
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank += RankChange
+        self.File = Files[Files.index(self.File) + FileChange]
+        
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+        
+        return CODESUCCESS 
 
 class King(Piece):
     def __init__(self,Colour,File,Rank):
