@@ -202,29 +202,30 @@ class Bishop(Piece):
         if NewPos[0] == self.File and int(NewPos[1]) == int(self.Rank):
                 return ERRCODEINVALIDMOVEMENT        
 
-
-        FileChange = Files.index(self.File) - Files.index(NewPos[0])
-        RankChange = self.Rank - int(NewPos[1])
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        RankChange = int(NewPos[1]) - self.Rank
 
         if abs(FileChange) != abs(RankChange):
                 return ERRCODEINVALIDMOVEMENT
 
-        TempRank = self.Rank
-        TempFile = self.File
 
         if RankChange > 0:
                 AddToRank = 1
+                TempRank = self.Rank + 1
         else:
                 AddToRank = -1
+                TempRank = self.Rank - 1
 
         if FileChange > 0:
                 AddToFile = 1
+                TempFile = Files[Files.index(self.File) + 1]
         else:
                 AddToFile = -1
+                TempFile = Files[Files.index(self.File) - 1]
+        
+       
 
-
-
-        for i in range(RankChange): # incase you cant tell already, we can switch RankChange for FileChange and it makes no difference, because theyre the same...
+        for i in range(abs(RankChange)-1): # incase you cant tell already, we can switch RankChange for FileChange and it makes no difference .
                 if Board[NotationToIndex(TempFile,TempRank)].Piece != None:
                         return ERRCODEOBSTRUCTION
                 TempRank += AddToRank
