@@ -249,8 +249,52 @@ class Rook(Piece):
         return f"{self.Colour[0]}R"
 
     def Move(self,NewPos,Board):
-        pass
+        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+                return ERRCODESQUAREDOESNTEXIST
+        
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        RankChange = int(NewPos[1]) - self.Rank
 
+        if FileChange != 0 and RankChange != 0:
+                return ERRCODEINVALIDMOVEMENT
+
+        if FileChange == 0:
+                Vertical = True
+        else:
+                Vertical = False
+
+        if Vertical:
+                if RankChange > 0:
+                        AddToRank = 1
+                        TempRank = self.Rank +1
+                else:
+                        AddToRank = -1 
+                        TempRank = self.Rank -1
+                for i in range(RankChange - 1):
+                        if Board[NotationToIndex(self.File,TempRank)].Piece != None:
+                                return ERRCODEOBSTRUCTION
+                        TempRank += AddToRank
+        else:
+                if FileChange > 0:
+                        AddToFile = 1
+                        TempFile = Files[Files.index(self.File) + 1]
+                else:
+                        AddToFile = -1
+                        TempFile = Files[Files.index(self.File) - 1]
+
+                for i in range(FileChange - 1):
+                        if Board[NotationToIndex(self.File,TempRank)].Piece != None:
+                                return ERRCODEOBSTRUCTION
+                        TempFile = Files[Files.index(TempFile) + AddToFile]
+        
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+
+        self.Rank += RankChange
+        self.File = Files[Files.index(self.File) + FileChange]
+        
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+        
 
 class Queen(Piece):
     def __init__(self,Colour,File,Rank):
