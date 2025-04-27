@@ -13,8 +13,44 @@ Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
 WhiteTurn = True
 MovesTaken = 0
+"""
+def IsCheck(ColourOfKing,Board):
+        ExampleKing = King(ColourOfKing,"A",1)
+        Index = False 
+        for i in Board:
+                if type(i.Piece) == type(ExampleKing):
+                        if i.Piece.Colour == ColourOfKing:
+                                Index = Board.index(i)
+        
+        OpposingPieces = []
 
+        for i in Board:
+                if type(i.Piece) != type(None):
+                        if i.Piece.Colour != ColourOfKing:
+                                OpposingPieces.append(i.Piece)
+
+        TempBoard = [i for i in Board]
+        OccupiedSquares = []
+
+        for Piece in OpposingPieces:
+                for Square in range(64):
+                        MovingSquare = IndexToNotation(Index)
+                        if Piece.Move(MovingSquare,TempBoard) == CODESUCCESS:
+                                OccupiedSquares.append(TempBoard[i])
+                                TempBoard = [i for i in Board]
+        
+        for i in OccupiedSquares:
+                if NotationToIndex(i.File,i.Rank) == Index:
+                        return True
+        return False   
+""" 
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
+
+def IndexToNotation(Index):
+        for i in Files:
+                for j in Ranks:
+                        if NotationToIndex(i,j) == Index:
+                                return f"{i}{j}"
 
 def NotationToIndex(File,Rank):
     Rank = int(Rank)
@@ -96,7 +132,7 @@ class Pawn(Piece):
     def __str__(self):
         return f"{self.Colour[0]}p"
     
-    def Move(self,NewPos,Board):
+    def Move(self,NewPos,Board,CheckForCheck = True):
 # genuinely, i dont understand how the simplest piece in the game has the most complex implementation in code
 
         global AllMoves        
@@ -152,7 +188,7 @@ class Pawn(Piece):
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
                 
-
+#        print(IsCheck(self.Colour,Board))
 
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -171,7 +207,7 @@ class Knight(Piece):
     def __str__(self):
         return f"{self.Colour[0]}N"
 
-    def Move(self,NewPos,Board):
+    def Move(self,NewPos,Board,CheckForCheck = True):
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
         
@@ -185,6 +221,8 @@ class Knight(Piece):
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
         
+#        print(IsCheck(self.Colour,Board))
+
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -202,7 +240,7 @@ class Bishop(Piece):
     def __str__(self):
         return f"{self.Colour[0]}B"
 
-    def Move(self,NewPos,Board):
+    def Move(self,NewPos,ParamBoard,CheckForCheck = True):
         if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
                 return ERRCODESQUAREDOESNTEXIST
 
@@ -233,21 +271,23 @@ class Bishop(Piece):
        
 
         for i in range(abs(RankChange)-1): # incase you cant tell already, we can switch RankChange for FileChange and it makes no difference .
-                if Board[NotationToIndex(TempFile,TempRank)].Piece != None:
+                if ParamBoard[NotationToIndex(TempFile,TempRank)].Piece != None:
                         return ERRCODEOBSTRUCTION
                 TempRank += AddToRank
                 TempFile = Files[Files.index(TempFile) + AddToFile]
 
-        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+        if ParamBoard[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if ParamBoard[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
 
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+#        print(IsCheck(self.Colour,Board))
+
+        ParamBoard[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
         self.File = Files[Files.index(self.File) + FileChange]
         
-        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+        ParamBoard[NotationToIndex(self.File,self.Rank)].Piece = self
 
         return CODESUCCESS
                          
@@ -259,7 +299,7 @@ class Rook(Piece):
     def __str__(self):
         return f"{self.Colour[0]}R"
 
-    def Move(self,NewPos,Board):
+    def Move(self,NewPos,Board,CheckForCheck = True):
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
         
@@ -303,6 +343,8 @@ class Rook(Piece):
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
 
+#        print(IsCheck(self.Colour,Board))
+
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -320,7 +362,7 @@ class Queen(Piece):
     def __str__(self):
         return f"{self.Colour[0]}Q"
 
-    def Move(self,NewPos,Board):
+    def Move(self,NewPos,Board,CheckForCheck = True):
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
         
@@ -332,23 +374,33 @@ class Queen(Piece):
         if abs(FileChange) == abs(RankChange):
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
                 ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
+                print("\nwe have just tried to move on tempboard like it was a bishop\n")
+                print("temp board: ")
+                DisplayBoard(TempBoard)
+                print("main board: ")
+                DisplayBoard(Board)
         elif (FileChange == 0 and RankChange != 0) or (FileChange != 0 and RankChange == 0):
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
                 ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
+                print("\nwe have just tried to move on tempboard like it was a rook\n")
         else:
                 return ERRCODEINVALIDMOVEMENT
-        
+
 
         if ValidMove == ERRCODEOBSTRUCTION:
                 return ERRCODEOBSTRUCTION
         elif ValidMove == ERRCODEINVALIDMOVEMENT:
                 return ERRCODEINVALIDMOVEMENT
-        
+        elif ValidMove == ERRCODEFRIENDLYFIRE:
+                return ERRCODEFRIENDLYFIRE        
 
         if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                DisplayBoard(Board)
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
          
+#        print(IsCheck(self.Colour,Board))
+
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -366,7 +418,7 @@ class King(Piece):
     def __str__(self):
         return f"{self.Colour[0]}K"
 
-    def Move(self,NewPos,Board):
+    def Move(self,NewPos,Board,CheckForCheck = True):
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
 
@@ -383,6 +435,8 @@ class King(Piece):
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
  
+        print(IsCheck(self.Colour,Board))
+
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -485,3 +539,6 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
+
+
+# print(IsCheck("Black",Board))

@@ -79,7 +79,7 @@ def ExecuteMove():
     
     
     if ResultingCode == CODESUCCESS:
-    #    system("clear")
+ #       system("clear")
         DisplayBoard(Board)
         WhiteTurn = not WhiteTurn
         if WhiteTurn:
@@ -92,7 +92,7 @@ def ExecuteMove():
 
             
     elif ResultingCode == ERRCODEOBSTRUCTION:
-   #     system("clear")
+#        system("clear")
         print("\npiece could not move because there was another piece in its way\n")
         DisplayBoard(Board)
             
@@ -102,12 +102,12 @@ def ExecuteMove():
         DisplayBoard(Board)
             
     elif ResultingCode == ERRCODECHECK:
- #       system("clear")
+   #     system("clear")
         print("\npiece could not move because it caused a check on its own king\n")
         DisplayBoard(Board)
     
     elif ResultingCode == ERRCODESQUAREDOESNTEXIST:
-#        system("clear")
+    #    system("clear")
         print("\npiece could not move because the given square does not exist\n")
         DisplayBoard(Board)
     elif ResultingCode == ERRCODEFRIENDLYFIRE:
