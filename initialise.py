@@ -1,5 +1,11 @@
 from os import system
 
+def ShowBoards(MainBoard,TempBoard):
+        print("the Main Board looks like this")
+        DisplayBoard(MainBoard)
+        print("the temp board looks like this")
+        DisplayBoard(TempBoard)
+
 # do we need these error codes? no. do we have these error codes? yes. do i want these error codes? yes. stop questioning everything i do, this is MY repositry, this is MY code and this is MY life i make MY OWN decisions and you get NO say in that
 
 CODESUCCESS = 0
@@ -281,6 +287,10 @@ class Bishop(Piece):
                         return ERRCODEFRIENDLYFIRE
 
 #        print(IsCheck(self.Colour,Board))
+        print("Param Board is: ")
+        DisplayBoard(ParamBoard) 
+
+        print(f"Param board == Main Board = {ParamBoard == Board}")   
 
         ParamBoard[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -375,17 +385,14 @@ class Queen(Piece):
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
                 ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
                 print("\nwe have just tried to move on tempboard like it was a bishop\n")
-                print("temp board: ")
-                DisplayBoard(TempBoard)
-                print("main board: ")
-                DisplayBoard(Board)
+                ShowBoards(Board,TempBoard)
         elif (FileChange == 0 and RankChange != 0) or (FileChange != 0 and RankChange == 0):
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
                 ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
                 print("\nwe have just tried to move on tempboard like it was a rook\n")
         else:
                 return ERRCODEINVALIDMOVEMENT
-
+        ShowBoards(Board,TempBoard)
 
         if ValidMove == ERRCODEOBSTRUCTION:
                 return ERRCODEOBSTRUCTION
@@ -395,7 +402,6 @@ class Queen(Piece):
                 return ERRCODEFRIENDLYFIRE        
 
         if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-                DisplayBoard(Board)
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
          
@@ -539,6 +545,5 @@ def DisplayBoard(Board):
     print()
 
 DisplayBoard(Board)
-
 
 # print(IsCheck("Black",Board))
