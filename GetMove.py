@@ -69,7 +69,6 @@ CODESUCCESS = 0                                                                 
 def ExecuteMove():
     global WhiteTurn
     global MovesTaken
-    global EnPassantBoardCheck
 
     MovingPieceSquare,ResultSquare = GetMove()
     TempBoard = Board
@@ -111,7 +110,9 @@ def ExecuteMove():
 #        system("clear")
         print("\npiece could not move because the given square does not exist\n")
         DisplayBoard(Board)
-            
+    elif ResultingCode == ERRCODEFRIENDLYFIRE:
+        print("\npiece could not move because it tried to take one of its own pieces\n")
+        DisplayBoard(Board)            
 
 
 """

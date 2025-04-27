@@ -7,6 +7,7 @@ ERRCODEOBSTRUCTION = 1
 ERRCODEINVALIDMOVEMENT = 2
 ERRCODECHECK = 3
 ERRCODESQUAREDOESNTEXIST = 4
+ERRCODEFRIENDLYFIRE = 5
 
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
@@ -147,7 +148,10 @@ class Pawn(Piece):
                         if Board[NotationToIndex(self.File,(self.Rank + (RankChange + 1)))].Piece: 
                                 return ERRCODEOBSTRUCTION
 
-
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+                        return ERRCODEFRIENDLYFIRE
+                
 
 
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
@@ -177,6 +181,9 @@ class Knight(Piece):
         if (RankChange not in (1,2,-1,-2) or FileChange not in (1,2,-1,-2)) or (abs(RankChange) == abs(FileChange)):
                 return ERRCODEINVALIDMOVEMENT
         
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+                        return ERRCODEFRIENDLYFIRE
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -230,6 +237,10 @@ class Bishop(Piece):
                         return ERRCODEOBSTRUCTION
                 TempRank += AddToRank
                 TempFile = Files[Files.index(TempFile) + AddToFile]
+
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+                        return ERRCODEFRIENDLYFIRE
 
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -288,6 +299,10 @@ class Rook(Piece):
                         TempFile = Files[Files.index(TempFile) + AddToFile]
         
 
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+                        return ERRCODEFRIENDLYFIRE
+
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -329,6 +344,10 @@ class Queen(Piece):
         elif ValidMove == ERRCODEINVALIDMOVEMENT:
                 return ERRCODEINVALIDMOVEMENT
         
+
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+                        return ERRCODEFRIENDLYFIRE
          
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -359,7 +378,11 @@ class King(Piece):
         if RankChange not in AcceptedChanges or FileChange not in AcceptedChanges:
                 return ERRCODEINVALIDMOVEMENT
 
-        
+       
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+                        return ERRCODEFRIENDLYFIRE
+ 
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
@@ -450,7 +473,7 @@ Board = FillBoard(ConstructBoard())
 def DisplayBoard(Board):
     print("     ",end = "")
     for i in range(8):
-        print(Files[i], end = "\u200B"*3)
+        print(Files[i], end = " "*3)
     for i in range(len(Board)):
         if i % 8 != 0 and i != 0:
             print(f"{Board[i]}",end="")
