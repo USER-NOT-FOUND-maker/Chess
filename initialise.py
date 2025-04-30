@@ -1,5 +1,33 @@
 from os import system
 
+def CopyBoards(BoardOne,BoardTwo):
+        for i in BoardOne:
+                BoardTwo.append(i)
+
+def CheckIfCheckmate(ColourOfKing,Board):
+        TempBoard = Board.copy()
+        AllPiecesForKing = []
+        for i in Board:
+                if i.Piece != None and i.Colour == ColourOfKing:
+                        AllPiecesForKing.append(i.Piece)
+        
+        while IsInCheck(ColourOfKing,Board):
+                if len(AllPiecesForKing) == 0:
+                        return True
+                
+                Piece = AllPiecesForKing[0]
+
+                for i in range(64):
+                        BeforeRank,BeforeFile = Piece.Rank,Piece.File
+                        BeforePiece = Board[i].Piece
+                        if Piece.Move(NotationToIndex(Piece.File,Piece.Rank),TempBaord) == CODESUCCESS:
+                                AfterRank,AfterFile = Piece.Rank,Piece.File
+
+                                TempBoard[NotationToIndex(AfterFile,AfterRank)].Piece = BeforePiece
+                                TempBoard[NotationToIndex(BeforeFile,BeforeRank)].Piece = Piece
+                                Piece.File,Piece.Rank = BeforeFile,BeforeRank
+                                
+
 def ShowBoards(MainBoard,TempBoard):
         print("the Main Board looks like this")
         DisplayBoard(MainBoard)
@@ -8,16 +36,28 @@ def ShowBoards(MainBoard,TempBoard):
 
 
 def IsInCheck(ColourOfKing,Board):
+        TempBoard = Board.copy()
         EXAMPLEKING = King("FOO","A",1)
         OpposingPieces = []
         for i in Board:
-                if type(i.Piece) == type(EXAMPLEKING) and i.Colour == ColourOfKing:
+#                print(i,i.Piece,type(i.Piece))
+                if type(i.Piece) == type(EXAMPLEKING) and i.Piece.Colour == ColourOfKing:
                         Index = Board.index(i)
-                if type(i.Piece) != type(None) and i.Colour != ColourOfKing:
-                        OpposingPieces.append(i)
+        
+        CopyKing = Board[Index].Piece
+        OpposingPieces = []
+
+        for i in Board:
+                if type(i.Piece) != type(None) and i.Piece.Colour != ColourOfKing:
+                        OpposingPieces.append(i.Piece)
 
         for i in OpposingPieces:
-                if i.Move(IndexToNotation(Index),Board) == CODESUCCESS:
+                BeforeRank = i.Rank
+                BeforeFile = i.File
+                if i.Move(IndexToNotation(Index),TempBoard,CheckForCheck = False) == CODESUCCESS:
+                        TempBoard[NotationToIndex(i.File,i.Rank)].Piece = CopyKing
+                        i.File,i.Rank = BeforeFile,BeforeRank
+                        TempBoard[NotationToIndex(BeforeFile,BeforeRank)].Piece = i
                         return True
         return False
 
@@ -31,6 +71,7 @@ ERRCODEINVALIDMOVEMENT = 2
 ERRCODECHECK = 3
 ERRCODESQUAREDOESNTEXIST = 4
 ERRCODEFRIENDLYFIRE = 5
+CHECKMATE = 6
 
 Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
@@ -181,16 +222,30 @@ class Pawn(Piece):
         if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
-                
-        IsInCheck("Whitw",Board)
 
+        
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
         self.File = Files[Files.index(self.File) + FileChange]
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = self
+
+        if CheckForCheck:
+                if IsInCheck(self.Colour,Board):
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+                        self.Rank -= RankChange
+                        self.File = Files[Files.index(self.File) - FileChange]
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                        return ERRCODECHECK    
+                
+        if self.Colour == "White":
+                CheckMateCol = "Black"
+        else:
+                CheckMateCol = "White"
         
+        if CheckIfCheckmate(CheckMateCol,Board):
+                return CHECKMATE 
         return CODESUCCESS
 
 class Knight(Piece):
@@ -223,7 +278,22 @@ class Knight(Piece):
         self.File = Files[Files.index(self.File) + FileChange]
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = self
-
+        
+        if CheckForCheck:
+                if IsInCheck(self.Colour,Board):
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+                        self.Rank -= RankChange
+                        self.File = Files[Files.index(self.File) - FileChange]
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                        return ERRCODECHECK    
+        
+        if self.Colour == "White":
+                CheckMateCol = "Black"
+        else:
+                CheckMateCol = "White"
+ 
+        if CheckIfCheckmate(CheckMateCol,Board):
+                return CHECKMATE 
         return CODESUCCESS
 
 class Bishop(Piece):
@@ -234,7 +304,7 @@ class Bishop(Piece):
     def __str__(self):
         return f"{self.Colour[0]}B"
 
-    def Move(self,NewPos,ParamBoard,CheckForCheck = True):
+    def Move(self,NewPos,Board,CheckForCheck = True):
         if (NewPos[0] not in Files) or (int(NewPos[1]) not in Ranks):
                 return ERRCODESQUAREDOESNTEXIST
 
@@ -265,24 +335,39 @@ class Bishop(Piece):
        
 
         for i in range(abs(RankChange)-1): # incase you cant tell already, we can switch RankChange for FileChange and it makes no difference .
-                if ParamBoard[NotationToIndex(TempFile,TempRank)].Piece != None:
+                if Board[NotationToIndex(TempFile,TempRank)].Piece != None:
                         return ERRCODEOBSTRUCTION
                 TempRank += AddToRank
                 TempFile = Files[Files.index(TempFile) + AddToFile]
 
-        if ParamBoard[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-                if ParamBoard[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
+        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
+                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
 
-#        print(IsCheck(self.Colour,Board))
 
-        ParamBoard[NotationToIndex(self.File,self.Rank)].Piece = None
+        TempBoard = [i for i in Board]
+
+        Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
         self.File = Files[Files.index(self.File) + FileChange]
         
-        ParamBoard[NotationToIndex(self.File,self.Rank)].Piece = self
-
+        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+        if CheckForCheck:
+                if IsInCheck(self.Colour,Board):
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+                        self.Rank -= RankChange
+                        self.File = Files[Files.index(self.File) - FileChange]
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                        return ERRCODECHECK    
+        
+        if self.Colour == "White":
+                CheckMateCol = "Black"
+        else:
+                CheckMateCol = "White"
+ 
+        if CheckIfCheckmate(CheckMateCol,Board):
+                return CHECKMATE 
         return CODESUCCESS
                          
 class Rook(Piece):
@@ -339,13 +424,30 @@ class Rook(Piece):
 
 #        print(IsCheck(self.Colour,Board))
 
+        TempBoard = [i for i in Board]
+
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
         self.Rank += RankChange
         self.File = Files[Files.index(self.File) + FileChange]
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = self
-    
+                
+        if CheckForCheck:
+                if IsInCheck(self.Colour,TempBoard):
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+                        self.Rank -= RankChange
+                        self.File = Files[Files.index(self.File) - FileChange]
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                        return ERRCODECHECK    
+                
+        if self.Colour == "White":
+                CheckMateCol = "Black"
+        else:
+                CheckMateCol = "White"
+ 
+        if CheckIfCheckmate(CheckMateCol,Board):
+                return CHECKMATE 
         return CODESUCCESS
 
 class Queen(Piece):
@@ -357,7 +459,37 @@ class Queen(Piece):
         return f"{self.Colour[0]}Q"
 
     def Move(self,NewPos,Board,CheckForCheck = True):
-        pass
+        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
+                return ERRCODESQUAREDOESNTEXIST
+
+        RankChange = int(NewPos[1]) - self.Rank
+        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
+        
+        if abs(RankChange) == abs(FileChange):
+                MoveLike = "Bishop"
+        elif (RankChange == 0 and FileChange != 0) or (RankChange != 0 and FileChange == 0):
+                MoveLike = "Rook"
+        else:
+                return ERRCODEINVALIDMOVEMENT
+
+
+        TempBoard = []
+        CopyBoards(Board,TempBoard)
+
+        if MoveLike == "Rook":
+                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
+        else:
+                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
+         
+        if TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard) == CODESUCCESS:
+                self.Rank += RankChange
+                self.File = Files[Files.index(self.File) + FileChange]
+                Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                return CODESUCCESS
+        else:
+                Res = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)   
+                Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                return Res     
 
 class King(Piece):
     def __init__(self,Colour,File,Rank):
@@ -384,7 +516,7 @@ class King(Piece):
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
  
-        print(IsCheck(self.Colour,Board))
+        TempBoard = [i for i in Board]
 
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -392,7 +524,23 @@ class King(Piece):
         self.File = Files[Files.index(self.File) + FileChange]
         
         Board[NotationToIndex(self.File,self.Rank)].Piece = self
-        
+                
+        if CheckForCheck: 
+                if IsInCheck(self.Colour,TempBoard):
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+                        self.Rank -= RankChange
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = None
+                        self.File = Files[Files.index(self.File) - FileChange]
+                        Board[NotationToIndex(self.File,self.Rank)].Piece = self
+                        return ERRCODECHECK   
+
+        if self.Colour == "White":
+                CheckMateCol = "Black"
+        else:
+                CheckMateCol = "White"
+ 
+        if CheckIfCheckmate(CheckMateCol,Board):
+                return CHECKMATE 
         return CODESUCCESS 
 
 

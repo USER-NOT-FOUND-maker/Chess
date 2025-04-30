@@ -1,4 +1,5 @@
 from initialise import *
+from sys import exit
 
 def ValidateSquare(Square):
     if len(Square) != 2:
@@ -103,7 +104,7 @@ def ExecuteMove():
             
     elif ResultingCode == ERRCODECHECK:
    #     system("clear")
-        print("\npiece could not move because it caused a check on its own king\n")
+        print("\npiece could not move because it either\n1. ignored a check on its own king\n2. caused a check on its own king\n")
         DisplayBoard(Board)
     
     elif ResultingCode == ERRCODESQUAREDOESNTEXIST:
@@ -112,7 +113,10 @@ def ExecuteMove():
         DisplayBoard(Board)
     elif ResultingCode == ERRCODEFRIENDLYFIRE:
         print("\npiece could not move because it tried to take one of its own pieces\n")
-        DisplayBoard(Board)            
+        DisplayBoard(Board)
+    else:
+        print("\nsomething has gone majorly wrong and we need to exit the program right now\n")
+        exit()       
 
 
 """
