@@ -114,6 +114,9 @@ def ExecuteMove():
     elif ResultingCode == ERRCODEFRIENDLYFIRE:
         print("\npiece could not move because it tried to take one of its own pieces\n")
         DisplayBoard(Board)
+    elif ResultingCode == CHECKMATE:
+        print(f"\n{MovingPiece.Colour} has won the game via checkmate\n")
+        exit()
     else:
         print("\nsomething has gone majorly wrong and we need to exit the program right now\n")
         exit()       

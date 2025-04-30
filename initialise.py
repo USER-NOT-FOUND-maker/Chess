@@ -1,33 +1,44 @@
 from os import system
+from copy import deepcopy
+
+def FindKingInd(ColKing,Board):
+        for i in Board:
+                if type(i.Piece) == type(King("FOO","A",1)) and i.Piece.Colour == ColKing:
+                        return Board.index(i)
+def FindKingAllies(ColKing,Board):
+        Allies = []
+        for i in Board:
+                if type(i.Piece) != type(None) and i.Piece.Colour == ColKing:
+                        Allies.append(i.Piece)
+        return Allies
+
+def FindKingEnemies(ColKing,Board):
+        Enemies = []
+        for i in Board:
+                if type(i.Piece) != type(None) and i.Piece.Colour != ColKing:
+                        Enemies.append(i.Piece)
+        return Enemies
 
 def CopyBoards(BoardOne,BoardTwo):
         for i in BoardOne:
                 BoardTwo.append(i)
 
 def CheckIfCheckmate(ColourOfKing,Board):
-        TempBoard = Board.copy()
-        AllPiecesForKing = []
-        for i in Board:
-                if i.Piece != None and i.Colour == ColourOfKing:
-                        AllPiecesForKing.append(i.Piece)
+        EnemyPieces,AllyPieces = FindKingEnemies(ColourOfKing,Board),FindKingAllies(ColourOfKing,Board)
         
-        while IsInCheck(ColourOfKing,Board):
-                if len(AllPiecesForKing) == 0:
-                        return True
-                
-                Piece = AllPiecesForKing[0]
+        TempBoard = deepcopy(Board)
 
-                for i in range(64):
-                        BeforeRank,BeforeFile = Piece.Rank,Piece.File
-                        BeforePiece = Board[i].Piece
-                        if Piece.Move(NotationToIndex(Piece.File,Piece.Rank),TempBaord) == CODESUCCESS:
-                                AfterRank,AfterFile = Piece.Rank,Piece.File
+        PossibleRankChanges,PossibleFileChanges = {-1,0,1}, {-1,0,1}
 
-                                TempBoard[NotationToIndex(AfterFile,AfterRank)].Piece = BeforePiece
-                                TempBoard[NotationToIndex(BeforeFile,BeforeRank)].Piece = Piece
-                                Piece.File,Piece.Rank = BeforeFile,BeforeRank
-                                
+        OriginalIndex = FindKingInd(ColourOfKing,Board)
+        Piece = Board[OriginalIndex].Piece
 
+        for RankChange in PossibleRankChanges:
+                for FileChange in PossibleFileChanges:
+                        if Piece.Move(f"{Files[Files.index(Piece.File) + FileChange]}{int(Piece.Rank + RankChange)}",TempBoard) == CODESUCCESS:
+                                return False
+        return True
+ 
 def ShowBoards(MainBoard,TempBoard):
         print("the Main Board looks like this")
         DisplayBoard(MainBoard)
@@ -37,19 +48,10 @@ def ShowBoards(MainBoard,TempBoard):
 
 def IsInCheck(ColourOfKing,Board):
         TempBoard = Board.copy()
-        EXAMPLEKING = King("FOO","A",1)
-        OpposingPieces = []
-        for i in Board:
-#                print(i,i.Piece,type(i.Piece))
-                if type(i.Piece) == type(EXAMPLEKING) and i.Piece.Colour == ColourOfKing:
-                        Index = Board.index(i)
-        
+        Index = FindKingInd(ColourOfKing,Board)
+ 
         CopyKing = Board[Index].Piece
-        OpposingPieces = []
-
-        for i in Board:
-                if type(i.Piece) != type(None) and i.Piece.Colour != ColourOfKing:
-                        OpposingPieces.append(i.Piece)
+        OpposingPieces = FindKingEnemies(ColourOfKing,Board)
 
         for i in OpposingPieces:
                 BeforeRank = i.Rank
@@ -365,9 +367,12 @@ class Bishop(Piece):
                 CheckMateCol = "Black"
         else:
                 CheckMateCol = "White"
+        
+        print(f"bishop colour is {self.Colour}, checking for checkmate against a {CheckMateCol} king")
  
         if CheckIfCheckmate(CheckMateCol,Board):
-                return CHECKMATE 
+                return CHECKMATE
+                 
         return CODESUCCESS
                          
 class Rook(Piece):
@@ -480,16 +485,20 @@ class Queen(Piece):
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
         else:
                 TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
+
+        Res = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
+        
+        print(f"Res is {Res}")
          
-        if TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard) == CODESUCCESS:
+        if Res in (CODESUCCESS,CHECKMATE):
                 self.Rank += RankChange
                 self.File = Files[Files.index(self.File) + FileChange]
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
-                return CODESUCCESS
+                return Res
         else:
                 Res = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)   
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
-                return Res     
+                return Res 
 
 class King(Piece):
     def __init__(self,Colour,File,Rank):
@@ -636,6 +645,15 @@ def DisplayBoard(Board):
 
     print()
 
-DisplayBoard(Board)
+#DisplayBoard(Board)
 
-# print(IsCheck("Black",Board))
+NewerBoard = ConstructBoard()
+NewerBoard[0].Piece = King("White","A",1)
+NewerBoard[1].Piece = Queen("Black","B",1)
+NewerBoard[2].Piece = Rook("Black","C",1)
+
+DisplayBoard(NewerBoard)
+
+print("this current position is supposed to be checkmate, lets check if it is using our function")
+
+print("is it checkmate according to our function?",CheckIfCheckmate("White",NewerBoard))
