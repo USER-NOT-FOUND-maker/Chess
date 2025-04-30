@@ -6,6 +6,23 @@ def ShowBoards(MainBoard,TempBoard):
         print("the temp board looks like this")
         DisplayBoard(TempBoard)
 
+
+def IsInCheck(ColourOfKing,Board):
+        EXAMPLEKING = King("FOO","A",1)
+        OpposingPieces = []
+        for i in Board:
+                if type(i.Piece) == type(EXAMPLEKING) and i.Colour == ColourOfKing:
+                        Index = Board.index(i)
+                if type(i.Piece) != type(None) and i.Colour != ColourOfKing:
+                        OpposingPieces.append(i)
+
+        for i in OpposingPieces:
+                if i.Move(IndexToNotation(Index),Board) == CODESUCCESS:
+                        return True
+        return False
+
+        
+
 # do we need these error codes? no. do we have these error codes? yes. do i want these error codes? yes. stop questioning everything i do, this is MY repositry, this is MY code and this is MY life i make MY OWN decisions and you get NO say in that
 
 CODESUCCESS = 0
@@ -19,37 +36,8 @@ Files = ["A","B","C","D","E","F","G","H"]
 Ranks = [1,2,3,4,5,6,7,8]
 WhiteTurn = True
 MovesTaken = 0
-"""
-def IsCheck(ColourOfKing,Board):
-        ExampleKing = King(ColourOfKing,"A",1)
-        Index = False 
-        for i in Board:
-                if type(i.Piece) == type(ExampleKing):
-                        if i.Piece.Colour == ColourOfKing:
-                                Index = Board.index(i)
-        
-        OpposingPieces = []
 
-        for i in Board:
-                if type(i.Piece) != type(None):
-                        if i.Piece.Colour != ColourOfKing:
-                                OpposingPieces.append(i.Piece)
-
-        TempBoard = [i for i in Board]
-        OccupiedSquares = []
-
-        for Piece in OpposingPieces:
-                for Square in range(64):
-                        MovingSquare = IndexToNotation(Index)
-                        if Piece.Move(MovingSquare,TempBoard) == CODESUCCESS:
-                                OccupiedSquares.append(TempBoard[i])
-                                TempBoard = [i for i in Board]
-        
-        for i in OccupiedSquares:
-                if NotationToIndex(i.File,i.Rank) == Index:
-                        return True
-        return False   
-""" 
+ 
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
 def IndexToNotation(Index):
@@ -194,7 +182,7 @@ class Pawn(Piece):
                 if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
                         return ERRCODEFRIENDLYFIRE
                 
-#        print(IsCheck(self.Colour,Board))
+        IsInCheck("Whitw",Board)
 
         Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -287,10 +275,6 @@ class Bishop(Piece):
                         return ERRCODEFRIENDLYFIRE
 
 #        print(IsCheck(self.Colour,Board))
-        print("Param Board is: ")
-        DisplayBoard(ParamBoard) 
-
-        print(f"Param board == Main Board = {ParamBoard == Board}")   
 
         ParamBoard[NotationToIndex(self.File,self.Rank)].Piece = None
 
@@ -373,48 +357,7 @@ class Queen(Piece):
         return f"{self.Colour[0]}Q"
 
     def Move(self,NewPos,Board,CheckForCheck = True):
-        if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
-                return ERRCODESQUAREDOESNTEXIST
-        
-        RankChange = int(NewPos[1]) - self.Rank
-        FileChange = Files.index(NewPos[0]) - Files.index(self.File)
-
-        TempBoard = [i for i in Board]
-
-        if abs(FileChange) == abs(RankChange):
-                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Bishop(self.Colour,self.File,self.Rank)
-                ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
-                print("\nwe have just tried to move on tempboard like it was a bishop\n")
-                ShowBoards(Board,TempBoard)
-        elif (FileChange == 0 and RankChange != 0) or (FileChange != 0 and RankChange == 0):
-                TempBoard[NotationToIndex(self.File,self.Rank)].Piece = Rook(self.Colour,self.File,self.Rank)
-                ValidMove = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard)
-                print("\nwe have just tried to move on tempboard like it was a rook\n")
-        else:
-                return ERRCODEINVALIDMOVEMENT
-        ShowBoards(Board,TempBoard)
-
-        if ValidMove == ERRCODEOBSTRUCTION:
-                return ERRCODEOBSTRUCTION
-        elif ValidMove == ERRCODEINVALIDMOVEMENT:
-                return ERRCODEINVALIDMOVEMENT
-        elif ValidMove == ERRCODEFRIENDLYFIRE:
-                return ERRCODEFRIENDLYFIRE        
-
-        if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece != None:
-                if Board[NotationToIndex(NewPos[0],int(NewPos[1]))].Piece.Colour == self.Colour:
-                        return ERRCODEFRIENDLYFIRE
-         
-#        print(IsCheck(self.Colour,Board))
-
-        Board[NotationToIndex(self.File,self.Rank)].Piece = None
-
-        self.Rank += RankChange
-        self.File = Files[Files.index(self.File) + FileChange]
-        
-        Board[NotationToIndex(self.File,self.Rank)].Piece = self
-        
-        return CODESUCCESS 
+        pass
 
 class King(Piece):
     def __init__(self,Colour,File,Rank):
@@ -458,6 +401,7 @@ class Square:
         self.Piece = Piece
         self.File = File
         self.Rank = Rank
+        self.Colour = None
 
     def __str__(self):
         if self.Piece == None:
