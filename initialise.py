@@ -645,15 +645,5 @@ def DisplayBoard(Board):
 
     print()
 
-#DisplayBoard(Board)
+DisplayBoard(Board)
 
-NewerBoard = ConstructBoard()
-NewerBoard[0].Piece = King("White","A",1)
-NewerBoard[1].Piece = Queen("Black","B",1)
-NewerBoard[2].Piece = Rook("Black","C",1)
-
-DisplayBoard(NewerBoard)
-
-print("this current position is supposed to be checkmate, lets check if it is using our function")
-
-print("is it checkmate according to our function?",CheckIfCheckmate("White",NewerBoard))
