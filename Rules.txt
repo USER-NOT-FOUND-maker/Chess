@@ -1,0 +1,29 @@
+THIS FILE EXPLAINS THE RULES OF CHESS
+
+objective of chess:
+
+chess has 1 main objective which is to put the opponent kings in checkmate (so if youre playing as white your objective is to put the black king in checkmate and if youre playing as black your objective is to put the white king in checkmate)
+
+to checkmate the king means to make sure that the king is able to be captured and there is NO way to defend the king or make sure it doesnt get captured.
+
+the board chess is played on:
+
+chess is played on an 8x8 board, the board is structured with ranks and files, the files are pieces on a vertical axis, they are denoted by the letters A to H. the ranks are places on a horizontal axis, they are denoted by numbers 1 to 8. on a conventional chess board, there are light and dark squares however because this is a terminal based chess board, there are no colours on this chessboard.
+
+when trying to find a specific square, we use something called notation. this is a system where we can specify what move we want to make through a string of characters, however we can also use it to locate different squares. for example, the string of words "e4" locates the square on the e file at the 4th rank.
+
+the different pieces of chess:
+
+there are 6 pieces in chess, each has their own moves and rules.
+
+Pawn- pawns move forward, unless they are capturing in which case they move diagonally. the pawn has simple rules which is that the pawn only moves 1 space forward (except on its first move where it has the choice to move 1 space ahead or 2 spaces ahead, however if you choose to go 1 space ahead for your first move, you lose the right to move 2 spaces ahead with that pawn). but when capturing, the pawn moves diagonally. the pawns have a special move called En Passant. this is a special move where pawns are allowed to capture a pawn that has moved 2 squares to land adjacently to the pawn. for example, if a black pawn is on e4 and a white pawn moves to d4, the black pawn is able to capture the white pawn as if it had moved to d3 instead, howver you only get one opportunity to take this move, if a pawn moves from e2 to e4 and you have a pawn on d4, you must take the opportunity to do en passant at that point, and if you dont you wont be able to do en passant again. the pawn is worth 1 point.
+
+Knights- knights move in an L shape, meaning that the knights move in a 2-1 or a 1-2 motion in any direction. this means that the knight can move either 2 ranks and 1 file or 1 rank and 2 files. the knight can jump over any piece meaning it doesnt get obstructed. the knight is worth 3 points.
+
+Bishop- bishops move diagonally meaning that however many ranks they change, they also change that many files, so a bishop on a1 can move to c3. the bishop can get obstructed by other pieces, this means that if the bishop is on a1 and their is a knight on b2, the bishop cannot move to c3
+
+Rooks- rooks move vertically and horizontally meaning that they only ever change either ranks or files, but never both. so a rook on a1 can move either to a8 or h1. the rooks, like bishops, can be obstructed.
+
+Queens - queens are a combination of bishop and rook, they are worth 9 points
+
+king - king is like the queen except it moevs 1 square at a time
