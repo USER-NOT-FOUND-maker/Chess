@@ -419,7 +419,6 @@ class Rook(Piece):
         FileChange = Files.index(NewPos[0]) - Files.index(self.File)
         RankChange = int(NewPos[1]) - self.Rank
 
-
         if FileChange != 0 and RankChange != 0:
                 return ERRCODEINVALIDMOVEMENT
 
@@ -438,6 +437,13 @@ class Rook(Piece):
                         TempRank = self.Rank - 1
                 for i in range(abs(RankChange) - 1):
 
+                if RankChange > 0:
+                        AddToRank = 1
+                        TempRank = self.Rank +1
+                else:
+                        AddToRank = -1 
+                        TempRank = self.Rank -1
+                for i in range(RankChange - 1):
                         if Board[NotationToIndex(self.File,TempRank)].Piece != None:
                                 return ERRCODEOBSTRUCTION
                         TempRank += AddToRank
@@ -448,11 +454,11 @@ class Rook(Piece):
                 else:
                         AddToFile = -1
                         TempFile = Files[Files.index(self.File) - 1]
-
-                
                 for i in range(abs(FileChange) - 1):
                         if Board[NotationToIndex(TempFile,self.Rank)].Piece != None:
                                 print(f"was obstructed by {Board[NotationToIndex(self.File,self.Rank)].Piece}") 
+                for i in range(FileChange - 1):
+                        if Board[NotationToIndex(self.File,self.Rank)].Piece != None:
                                 return ERRCODEOBSTRUCTION
                         TempFile = Files[Files.index(TempFile) + AddToFile]
 
@@ -524,7 +530,6 @@ class Queen(Piece):
 
         Res = TempBoard[NotationToIndex(self.File,self.Rank)].Piece.Move(NewPos,TempBoard,IsMove = False)
         
-         
         if IsMove and Res in (CODESUCCESS,CHECKMATE):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                 self.Rank += RankChange
