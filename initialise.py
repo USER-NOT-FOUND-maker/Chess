@@ -49,10 +49,14 @@ def CheckIfCheckmate(ColourOfKing,Board):
                 MovingIndex = IndexToNotation(MovingIndex)
 
                 MovingPiece = AllyPieces[0]
-                
+        
+#                print(f"inside 'checkifcheckmate' function, checking if {MovingPiece} can move to {MovingIndex}")
+
                 if MovingPiece.Move(MovingIndex,Board,IsMove=False) in (CODESUCCESS,CHECKMATE):
                         return False
                 
+#                print(f"the result of the move was {MovingPiece.Move(MovingIndex,Board,IsMove=False)}")
+
                 MovingIndex = NotationToIndex(MovingIndex[0],MovingIndex[1])
                 MovingIndex += 1
 
@@ -92,10 +96,7 @@ MovesTaken = 0
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
 def IndexToNotation(Index):
-        for i in Files:
-                for j in Ranks:
-                        if NotationToIndex(i,j) == Index:
-                                return f"{i}{j}"
+        return f"{Board[Index].File}{Board[Index].Rank}"
 
 def NotationToIndex(File,Rank):
     Rank = int(Rank)
@@ -689,7 +690,7 @@ def DisplayBoard(Board):
 
 CheckmateBoard = ConstructBoard()
 
-CheckmateBoard[8].Piece = King("White","A",1)
+CheckmateBoard[0].Piece = King("White","A",2)
 CheckmateBoard[1].Piece = Queen("Black","B",1)
 CheckmateBoard[2].Piece = Rook("Black","C",1)
 CheckmateBoard[63].Piece = King("Black","H",8)
@@ -697,3 +698,4 @@ CheckmateBoard[63].Piece = King("Black","H",8)
 DisplayBoard(CheckmateBoard)
 
 print(CheckIfCheckmate("White",CheckmateBoard))
+
