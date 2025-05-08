@@ -72,9 +72,19 @@ def IsInCheck(ColourOfKing,Board):
         EnemyPieces = FindKingEnemies(ColourOfKing,Board)
         KingIndex = FindKingInd(ColourOfKing,Board)
 
+        print("===============\n\nINSIDE ISINCHECK FUNCTION\n\n================")
+
+        print(f"KingIndex = {KingIndex}")
+
         for i in EnemyPieces:
-                if i.Move(IndexToNotation(KingIndex),Board,IsMove=False,CheckForCheck=False) == CODESUCCESS:
+                if i.Move(IndexToNotation(KingIndex,Board),Board,IsMove = False,CheckForCheck=False) == CODESUCCESS:
+                        print(f"king index is currently {KingIndex}, indextonotation returned {IndexToNotation(KingIndex,Board)} when passing in {KingIndex} and Board")
+                        print(f"moving {i} to {IndexToNotation(KingIndex,Board)} resulted in a CODESUCCESS")
+                        print(f"the current index of the king were checking if is in check is {FindKingInd(ColourOfKing,Board)}")
+                        print("=============\n\nEXITING ISINCHECK FUNCTION\n\n===============")
                         return True
+
+        print("=============\n\nEXITING ISINCHECK FUNCTION\n\n===============")
         return False
 
 # do we need these error codes? no. do we have these error codes? yes. do i want these error codes? yes. stop questioning everything i do, this is MY repositry, this is MY code and this is MY life i make MY OWN decisions and you get NO say in that
@@ -95,7 +105,7 @@ MovesTaken = 0
  
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
-def IndexToNotation(Index):
+def IndexToNotation(Index,Board):
         return f"{Board[Index].File}{Board[Index].Rank}"
 
 def NotationToIndex(File,Rank):
@@ -143,7 +153,7 @@ class Piece:
             raise InvalidPieceInitialiser("Entered file is not valid")
         if Rank not in Ranks:
             raise InvalidPieceInitialiser("Entered rank is not valid")
-        
+
         self.File = File
         self.Rank = Rank
         self.Colour = Colour
@@ -185,7 +195,8 @@ class Pawn(Piece):
 # genuinely, i dont understand how the simplest piece in the game has the most complex implementation in code
 
         global AllMoves        
-
+        
+        print(f"made a call to {self}.Move, NewPos = {NewPos}, CheckForCheck = {CheckForCheck}, IsMove = {IsMove}")
 
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
             return ERRCODESQUAREDOESNTEXIST
@@ -243,15 +254,12 @@ class Pawn(Piece):
                 self.Rank += RankChange
                 self.File = Files[Files.index(self.File) + FileChange]
                 
-
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                 
-        TempPiece = Board[NotationToIndex(self.File,self.Rank)].Piece
-
         if CheckForCheck:
                 if IsInCheck(self.Colour,Board):
                         if IsMove:
-                                Board[NotationToIndex(self.File,self.Rank)].Piece = TempPiece
+                                Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
                                 self.File = Files[Files.index(self.File) - FileChange]
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
@@ -300,12 +308,11 @@ class Knight(Piece):
                  
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                 
-        TempPiece = Board[NotationToIndex(self.File,self.Rank)].Piece
 
         if CheckForCheck:
                 if IsInCheck(self.Colour,Board):
                         if IsMove:
-                                Board[NotationToIndex(self.File,self.Rank)].Piece = TempPiece
+                                Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
                                 self.File = Files[Files.index(self.File) - FileChange]
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
@@ -382,12 +389,11 @@ class Bishop(Piece):
                 
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
 
-        TempPiece = Board[NotationToIndex(self.File,self.Rank)].Piece
 
         if CheckForCheck:
                 if IsInCheck(self.Colour,Board):
                         if IsMove:
-                                Board[NotationToIndex(self.File,self.Rank)].Piece = TempPiece
+                                Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
                                 self.File = Files[Files.index(self.File) - FileChange]
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
@@ -472,12 +478,11 @@ class Rook(Piece):
                 
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         
-        TempPiece = Board[NotationToIndex(self.File,self.Rank)].Piece
 
         if CheckForCheck:
                 if IsInCheck(self.Colour,TempBoard):
                         if IsMove: 
-                                Board[NotationToIndex(self.File,self.Rank)].Piece = TempPiece
+                                Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
                                 self.File = Files[Files.index(self.File) - FileChange]
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
@@ -572,12 +577,11 @@ class King(Piece):
                 
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         
-        TempPiece = Board[NotationToIndex(self.File,self.Rank)].Piece
 
         if CheckForCheck: 
                 if IsInCheck(self.Colour,TempBoard):
                         if IsMove:
-                                Board[NotationToIndex(self.File,self.Rank)].Piece = TempPiece
+                                Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
                                 self.File = Files[Files.index(self.File) - FileChange]
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
@@ -687,15 +691,7 @@ def DisplayBoard(Board):
     print()
 
 # DisplayBoard(Board)
-
-CheckmateBoard = ConstructBoard()
-
-CheckmateBoard[0].Piece = King("White","A",2)
-CheckmateBoard[1].Piece = Queen("Black","B",1)
-CheckmateBoard[2].Piece = Rook("Black","C",1)
-CheckmateBoard[63].Piece = King("Black","H",8)
-
-DisplayBoard(CheckmateBoard)
-
-print(CheckIfCheckmate("White",CheckmateBoard))
-
+"""
+for Index in range(64):
+        print(f"function evalues {Index} to be at notation {IndexToNotation(Index,Board)}")
+"""
