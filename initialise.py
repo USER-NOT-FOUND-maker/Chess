@@ -75,16 +75,18 @@ def IsInCheck(ColourOfKing,Board):
         print("===============\n\nINSIDE ISINCHECK FUNCTION\n\n================")
 
         print(f"KingIndex = {KingIndex}")
+        
+        KingIndex = IndexToNotation(KingIndex,Board)
+
+        print(f"KingIndex after converting it to notation is {KingIndex}")
 
         for i in EnemyPieces:
-                if i.Move(IndexToNotation(KingIndex,Board),Board,IsMove = False,CheckForCheck=False) == CODESUCCESS:
-                        print(f"king index is currently {KingIndex}, indextonotation returned {IndexToNotation(KingIndex,Board)} when passing in {KingIndex} and Board")
-                        print(f"moving {i} to {IndexToNotation(KingIndex,Board)} resulted in a CODESUCCESS")
-                        print(f"the current index of the king were checking if is in check is {FindKingInd(ColourOfKing,Board)}")
-                        print("=============\n\nEXITING ISINCHECK FUNCTION\n\n===============")
+                if i.Move(KingIndex,Board,IsMove = False,CheckForCheck=False) == CODESUCCESS:
+#                        print(f"the current index of the king were checking if is in check is {FindKingInd(ColourOfKing,Board)}")
+ #                       print("=============\n\nEXITING ISINCHECK FUNCTION AND RETURNING TRUE\n\n===============")
                         return True
 
-        print("=============\n\nEXITING ISINCHECK FUNCTION\n\n===============")
+  #      print("=============\n\nEXITING ISINCHECK FUNCTION AND RETURNING FALSE\n\n===============")
         return False
 
 # do we need these error codes? no. do we have these error codes? yes. do i want these error codes? yes. stop questioning everything i do, this is MY repositry, this is MY code and this is MY life i make MY OWN decisions and you get NO say in that
@@ -106,6 +108,7 @@ MovesTaken = 0
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
 def IndexToNotation(Index,Board):
+        print(f"INSIDE INDEXTONOTATION FUNCTION, PASSED IN ARGUMENT {Index}. Board[Index] is {Board[Index]}")
         return f"{Board[Index].File}{Board[Index].Rank}"
 
 def NotationToIndex(File,Rank):
@@ -691,7 +694,11 @@ def DisplayBoard(Board):
     print()
 
 # DisplayBoard(Board)
+
 """
 for Index in range(64):
         print(f"function evalues {Index} to be at notation {IndexToNotation(Index,Board)}")
 """
+
+for i in Board:
+        print(f"Piece on this square is {i.Piece} -- Notation of this square is {i.File+str(i.Rank)}")
