@@ -46,7 +46,7 @@ def CheckIfCheckmate(ColourOfKing,Board):
                 if len(AllyPieces) == 0:
                         return True
 
-                MovingIndex = IndexToNotation(MovingIndex)
+                MovingIndex = IndexToNotation(MovingIndex,Board)
 
                 MovingPiece = AllyPieces[0]
         
@@ -616,22 +616,22 @@ class Square:
 
 def ConstructBoard():
     Board = []
-    for i in range(1,9):
-        Board.append(Square(None,"A",i))
-    for i in range(1,9):
-        Board.append(Square(None,"B",i))
-    for i in range(1,9):
-        Board.append(Square(None,"C",i))
-    for i in range(1,9):
-        Board.append(Square(None,"D",i))
-    for i in range(1,9):
-        Board.append(Square(None,"E",i))
-    for i in range(1,9):
-        Board.append(Square(None,"F",i))
-    for i in range(1,9):
-        Board.append(Square(None,"G",i))
-    for i in range(1,9):
-        Board.append(Square(None,"H",i))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],1))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],2))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],3))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],4))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],5))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],6))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],7))
+    for i in range(0,8):
+        Board.append(Square(None,Files[i],8))
 
     return Board
 
