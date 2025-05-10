@@ -119,7 +119,8 @@ def ExecuteMove():
         exit()
     else:
         print("\nsomething has gone majorly wrong and we need to exit the program right now\n")
-        exit()       
+        exit()      
+ 
 
 
 """

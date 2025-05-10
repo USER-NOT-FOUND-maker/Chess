@@ -683,5 +683,17 @@ def DisplayBoard(Board):
 
     print()
 
-DisplayBoard(Board)
+# DisplayBoard(Board)
 
+CheckmateBoard = ConstructBoard()
+
+CheckmateBoard[8].Piece = King("White","A",2)
+CheckmateBoard[1].Piece = Queen("Black","B",1)
+CheckmateBoard[2].Piece = Rook("Black","C",1)
+CheckmateBoard[63].Piece = King("Black","H",8)
+
+
+print("this is what CheckmateBoard looks like")
+DisplayBoard(CheckmateBoard)
+
+print(f"calling 'CheckIfCheckmate' function (passing 'White' in for the colour) on CheckmateBoard returns {CheckIfCheckmate('White',CheckmateBoard)}")
