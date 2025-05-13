@@ -39,7 +39,7 @@ def CheckIfCheckmate(ColourOfKing,Board):
         MovingIndex = 0
 
         while True:
-                if MovingIndex == 63:
+                if MovingIndex == 64:
                         MovingIndex = 0
                         AllyPieces.pop(0)
                 
@@ -47,18 +47,20 @@ def CheckIfCheckmate(ColourOfKing,Board):
                         return True
 
                 MovingIndex = IndexToNotation(MovingIndex,Board)
-
+                
                 MovingPiece = AllyPieces[0]
         
-#                print(f"inside 'checkifcheckmate' function, checking if {MovingPiece} can move to {MovingIndex}")
+                print(f"inside 'checkifcheckmate' function, checking if {MovingPiece} can move to {MovingIndex}")
 
                 if MovingPiece.Move(MovingIndex,Board,IsMove=False) in (CODESUCCESS,CHECKMATE):
                         return False
                 
-#                print(f"the result of the move was {MovingPiece.Move(MovingIndex,Board,IsMove=False)}")
+                print(f"after checking for the move, MovingIndex is {MovingIndex}\n")
+                print(f"the result of the move was {MovingPiece.Move(MovingIndex,Board,IsMove=False)}")
 
                 MovingIndex = NotationToIndex(MovingIndex[0],MovingIndex[1])
                 MovingIndex += 1
+        return True
 
  
 def ShowBoards(MainBoard,TempBoard):
@@ -543,6 +545,9 @@ class King(Piece):
         return f"{self.Colour[0]}K"
 
     def Move(self,NewPos,Board,CheckForCheck = True,IsMove = True):
+        
+        print(f"made a call to {self}, moving to {NewPos}")
+
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
 
@@ -552,6 +557,7 @@ class King(Piece):
         AcceptedChanges = (1,0,-1)
 
         if RankChange not in AcceptedChanges or FileChange not in AcceptedChanges:
+                print(f"got an invalid movement trying to move {self} to {NewPos}, self.Rank = {self.Rank}, self.File = {self.File}, rankchange is {RankChange}, filechange is {FileChange}")
                 return ERRCODEINVALIDMOVEMENT
 
        
@@ -606,21 +612,21 @@ class Square:
 
 def ConstructBoard():
     Board = []
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],1))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],2))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],3))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],4))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],5))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],6))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],7))
-    for i in range(0,8):
+    for i in range(8):
         Board.append(Square(None,Files[i],8))
 
     return Board
@@ -684,6 +690,10 @@ def DisplayBoard(Board):
     print()
 
 # DisplayBoard(Board)
+"""
+for i in range(64):
+        print(f"{i} = {IndexToNotation(i,Board)}")
+"""
 
 CheckmateBoard = ConstructBoard()
 
