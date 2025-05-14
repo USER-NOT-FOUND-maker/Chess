@@ -1,6 +1,13 @@
 from os import system
 from copy import deepcopy
 
+Files = ["A","B","C","D","E","F","G","H"]
+Ranks = [1,2,3,4,5,6,7,8]
+
+def AddToFile(File,Add):
+        return Files[Files.index(File) + Add]
+
+
 def ShowAllPieces(Pieces):
         res = "\n"
         res += "["
@@ -35,34 +42,9 @@ def CopyBoards(BoardOne,BoardTwo):
 
 def CheckIfCheckmate(ColourOfKing,Board):
         AllyPieces = FindKingAllies(ColourOfKing,Board)
-        
+
         MovingIndex = 0
 
-        while True:
-                if MovingIndex == 64:
-                        MovingIndex = 0
-                        AllyPieces.pop(0)
-                
-                if len(AllyPieces) == 0:
-                        return True
-
-                MovingIndex = IndexToNotation(MovingIndex,Board)
-                
-                MovingPiece = AllyPieces[0]
-        
-                print(f"inside 'checkifcheckmate' function, checking if {MovingPiece} can move to {MovingIndex}")
-
-                if MovingPiece.Move(MovingIndex,Board,IsMove=False) in (CODESUCCESS,CHECKMATE):
-                        return False
-                
-                print(f"after checking for the move, MovingIndex is {MovingIndex}\n")
-                print(f"the result of the move was {MovingPiece.Move(MovingIndex,Board,IsMove=False)}")
-
-                MovingIndex = NotationToIndex(MovingIndex[0],MovingIndex[1])
-                MovingIndex += 1
-        return True
-
- 
 def ShowBoards(MainBoard,TempBoard):
         print("the Main Board looks like this")
         DisplayBoard(MainBoard)
@@ -93,8 +75,6 @@ ERRCODESQUAREDOESNTEXIST = 4
 ERRCODEFRIENDLYFIRE = 5
 CHECKMATE = 6
 
-Files = ["A","B","C","D","E","F","G","H"]
-Ranks = [1,2,3,4,5,6,7,8]
 WhiteTurn = True
 MovesTaken = 0
 
@@ -247,8 +227,8 @@ class Pawn(Piece):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
                 self.Rank += RankChange
-                self.File = Files[Files.index(self.File) + FileChange]
-                
+                self.File = AddToFile(self.File,FileChange)
+
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                 
         if CheckForCheck:
@@ -256,7 +236,7 @@ class Pawn(Piece):
                         if IsMove:
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
-                                self.File = Files[Files.index(self.File) - FileChange]
+                                self.File = AddToFile(self.File,-FileChange)
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         return ERRCODECHECK    
         
