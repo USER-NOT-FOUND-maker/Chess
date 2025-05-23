@@ -7,7 +7,6 @@ Ranks = [1,2,3,4,5,6,7,8]
 def AddToFile(File,Add):
         return Files[Files.index(File) + Add]
 
-
 def ShowAllPieces(Pieces):
         res = "\n"
         res += "["
@@ -30,6 +29,8 @@ def FindKingAllies(ColKing,Board):
         return Allies
 
 def FindKingEnemies(ColKing,Board):
+        print(f"\n\nINSIDE FINDKINGENEMIES FUNCTION\n\nBOARD LOOKS LIKE ")
+        DisplayBoard(Board)
         Enemies = []
         for i in Board:
                 if type(i.Piece) != type(None) and i.Piece.Colour != ColKing:
@@ -41,9 +42,7 @@ def CopyBoards(BoardOne,BoardTwo):
                 BoardTwo.append(i)
 
 def CheckIfCheckmate(ColourOfKing,Board):
-        AllyPieces = FindKingAllies(ColourOfKing,Board)
-
-        MovingIndex = 0
+        
 
 def ShowBoards(MainBoard,TempBoard):
         print("the Main Board looks like this")
@@ -57,7 +56,7 @@ def IsInCheck(ColourOfKing,Board):
         KingIndex = FindKingInd(ColourOfKing,Board)
 
         
-        KingIndex = IndexToNotation(KingIndex,Board)
+        KingIndex = IndexToNotation(KingIndex,Board,Caller = "IsInCheck")
 
         for i in EnemyPieces:
                 if i.Move(KingIndex,Board,IsMove = False,CheckForCheck=False) == CODESUCCESS:
@@ -75,13 +74,24 @@ ERRCODESQUAREDOESNTEXIST = 4
 ERRCODEFRIENDLYFIRE = 5
 CHECKMATE = 6
 
+ErrCodeDisplay = {
+        0:"CODESUCCES",
+        1:"ERRCODEOBSTRUCTION",
+        2:"ERRCODEINVALIDMOVEMENT",
+        3:"ERRCODECHECK",
+        4:"ERRCODESQUAREDOESNTEXIST",
+        5:"ERRCODEFRIENDLYFIRE",
+        6:"CHECKMATE"
+}
+
 WhiteTurn = True
 MovesTaken = 0
 
  
 # idk who needs to hear this but when "WhiteTurn" is not true, that means that its not whites turn, which means its blacks turn, try to keep up
 
-def IndexToNotation(Index,Board):
+def IndexToNotation(Index,Board,Caller="Unspecified function"):
+        print(f"inside 'IndexToNotation' function, given index {Index}, called by {Caller}")
         return f"{Board[Index].File}{Board[Index].Rank}"
 
 def NotationToIndex(File,Rank):
@@ -279,7 +289,7 @@ class Knight(Piece):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
                 self.Rank += RankChange
-                self.File = Files[Files.index(self.File) + FileChange]
+                self.File = AddToFile(self.File,FileChange)
                  
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                 
@@ -289,7 +299,7 @@ class Knight(Piece):
                         if IsMove:
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
-                                self.File = Files[Files.index(self.File) - FileChange]
+                                self.File = AddToFile(self.File,-FileChange)
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         return ERRCODECHECK
         
@@ -359,8 +369,7 @@ class Bishop(Piece):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
                 self.Rank += RankChange
-                self.File = Files[Files.index(self.File) + FileChange]
-                
+                self.File = AddToFile(self.File,FileChange)
                 
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
 
@@ -370,7 +379,7 @@ class Bishop(Piece):
                         if IsMove:
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
-                                self.File = Files[Files.index(self.File) - FileChange]
+                                self.File = AddToFile(self.File,-FileChange)
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         return ERRCODECHECK
         
@@ -448,9 +457,8 @@ class Rook(Piece):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
                 self.Rank += RankChange
-                self.File = Files[Files.index(self.File) + FileChange]
-                
-                
+                self.File = AddToFile(self.File,FileChange)
+
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         
 
@@ -459,7 +467,7 @@ class Rook(Piece):
                         if IsMove: 
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
-                                self.File = Files[Files.index(self.File) - FileChange]
+                                self.File = AddToFile(self.File,-FileChange)
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         return ERRCODECHECK
 
@@ -510,7 +518,7 @@ class Queen(Piece):
         if IsMove and Res in (CODESUCCESS,CHECKMATE):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                 self.Rank += RankChange
-                self.File = Files[Files.index(self.File) + FileChange]
+                self.File = AddToFile(self.File,FileChange)
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                 return Res
         else:
@@ -526,8 +534,6 @@ class King(Piece):
 
     def Move(self,NewPos,Board,CheckForCheck = True,IsMove = True):
         
-        print(f"made a call to {self}, moving to {NewPos}")
-
         if NewPos[0] not in Files or int(NewPos[1]) not in Ranks:
                 return ERRCODESQUAREDOESNTEXIST
 
@@ -537,7 +543,6 @@ class King(Piece):
         AcceptedChanges = (1,0,-1)
 
         if RankChange not in AcceptedChanges or FileChange not in AcceptedChanges:
-                print(f"got an invalid movement trying to move {self} to {NewPos}, self.Rank = {self.Rank}, self.File = {self.File}, rankchange is {RankChange}, filechange is {FileChange}")
                 return ERRCODEINVALIDMOVEMENT
 
        
@@ -552,17 +557,18 @@ class King(Piece):
                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
 
                 self.Rank += RankChange
-                self.File = Files[Files.index(self.File) + FileChange]
+                self.File = AddToFile(self.File,FileChange)
                 
                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         
+
 
         if CheckForCheck: 
                 if IsInCheck(self.Colour,TempBoard):
                         if IsMove:
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = None
                                 self.Rank -= RankChange
-                                self.File = Files[Files.index(self.File) - FileChange]
+                                self.File = AddToFile(self.File,-FileChange)
                                 Board[NotationToIndex(self.File,self.Rank)].Piece = self
                         return ERRCODECHECK
 
